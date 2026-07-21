@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Global Smooth Slide-In Animation (Disabled) */
+.smooth-slide-in {
+  animation: none !important;
+}

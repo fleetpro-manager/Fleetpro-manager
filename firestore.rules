@@ -1,0 +1,132 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Catch-All Global Safety Net
+    // Removed catch-all to prevent potential override issues
+
+    // --- REUSABLE PRIMITIVES ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isOwner(userId, docData) {
+      return isSignedIn() && (
+        request.auth.uid == userId 
+        || (docData != null && docData.get('firebaseUid', '') == request.auth.uid)
+        || (docData != null && docData.get('email', '') == request.auth.token.email)
+        || (docData != null && docData.get('userId', '') == request.auth.uid)
+      );
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'mdhassanahamed15@gmail.com' || 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ADMIN')
+      );
+    }
+
+    // --- VALIDATION HELPERS ---
+    function isValidUser(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() <= 200
+        && data.email is string && data.email.size() <= 200
+        && data.role in ['ADMIN', 'USER']
+        && data.status in ['PENDING', 'ENABLED', 'DISABLED', 'BLOCKED']
+        && (!('avatar' in data) || (data.avatar is string && data.avatar.size() <= 1048576))
+        && (!('firebaseUid' in data) || data.firebaseUid is string);
+    }
+
+    function isValidTrip(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.fileId is string && data.fileId.size() <= 128
+        && data.userId is string && data.userId.size() <= 128
+        && data.fromCountry is string && data.fromCountry.size() <= 100
+        && data.arrivalCountry is string && data.arrivalCountry.size() <= 100
+        && data.paymentStatus in ['PAID', 'PARTIAL', 'UNPAID']
+        && data.totalAmount is number
+        && data.paidAmount is number
+        && (!('firebaseUid' in data) || data.firebaseUid is string);
+    }
+
+    function isValidProfile(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() <= 200
+        && data.userId is string && data.userId.size() <= 128
+        && data.type in ['COMPANY', 'EMPLOYEE']
+        && (!('firebaseUid' in data) || data.firebaseUid is string);
+    }
+
+    function isValidFinance(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.userId is string && data.userId.size() <= 128
+        && data.amount is number
+        && data.type in ['SALARY', 'ADVANCE', 'COMMISSION']
+        && data.status in ['PAID', 'PENDING']
+        && (!('firebaseUid' in data) || data.firebaseUid is string);
+    }
+
+    function isValidMonthlyFile(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.userId is string && data.userId.size() <= 128
+        && data.month is int && data.month >= 1 && data.month <= 12
+        && data.year is int && data.year >= 2020 && data.year <= 2100
+        && data.status in ['OPEN', 'CLOSED']
+        && (!('firebaseUid' in data) || data.firebaseUid is string);
+    }
+
+    function isValidPayment(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.userId is string && data.userId.size() <= 128
+        && data.transactionId is string && data.transactionId.size() <= 200
+        && data.amount is number
+        && data.type in ['INCOME', 'DEDUCTION']
+        && data.method in ['CASH', 'ONLINE_BANK', 'MOBILE_BANKING']
+        && data.category is string
+        && data.status in ['PENDING', 'RECEIVED']
+        && (!('firebaseUid' in data) || data.firebaseUid is string);
+    }
+
+    function isValidNotification(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.title is string && data.title.size() <= 200
+        && data.message is string && data.message.size() <= 1000
+        && data.type in ['EXPIRY', 'REGISTRATION', 'INFO']
+        && data.isRead is bool
+        && (!('firebaseUid' in data) || data.firebaseUid is string);
+    }
+
+    function isValidFuel(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.date is string && data.date.size() <= 100
+        && data.receiptNumber is string && data.receiptNumber.size() <= 100
+        && data.price is number
+        && data.volume is number
+        && data.totalAmount is number
+        && data.userId is string && data.userId.size() <= 128
+        && data.month is int && data.month >= 1 && data.month <= 12
+        && data.year is int && data.year >= 2020 && data.year <= 2100;
+    }
+
+    // --- GLOBAL ALLOW RULES (SINCE APP USES CUSTOM AUTH) ---
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
