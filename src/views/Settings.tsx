@@ -277,7 +277,7 @@ const Settings: React.FC = () => {
       
       
       onClick={onClick} 
-      className="w-full flex items-center justify-between p-3 bg-theme-card rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-white/10 transition-all"
+      className="w-full flex items-center justify-between p-3 bg-theme-card rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
     >
       <div className="flex items-center gap-4">
         <div className={`p-2 rounded-lg bg-transparent flex items-center justify-center`} style={{ color: color }}>
@@ -294,7 +294,7 @@ const Settings: React.FC = () => {
         {!activeSection ? (
           <div 
             key="main-list"
-            className="absolute inset-0 w-full h-full flex flex-col overflow-y-auto px-4 sm:px-6 lg:px-8 pt-6 pb-[calc(76px+env(safe-area-inset-bottom)+16px)] space-y-4"
+            className="absolute inset-0 w-full h-full flex flex-col overflow-y-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8 pb-[calc(76px+env(safe-area-inset-bottom)+16px)] space-y-4"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <MenuItem 
@@ -404,7 +404,7 @@ const Settings: React.FC = () => {
               <button
                 
                 onClick={handleLogout}
-                className="w-full p-3 flex items-center justify-between rounded-lg bg-white hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group shadow-sm"
+                className="w-full p-3 flex items-center justify-between rounded-lg bg-white hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors group shadow-sm"
               >
                 <div className="flex items-center gap-4">
                   <div className="p-2 rounded-lg bg-transparent text-red-500 group-hover:text-red-600">
@@ -419,21 +419,8 @@ const Settings: React.FC = () => {
         ) : (
           <div 
             key={activeSection}
-            className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto px-4 sm:px-6 lg:px-8 ${activeSection === 'CURRENCY' ? 'pt-4 sm:pt-6 lg:pt-8' : 'pt-6'} pb-[calc(76px+env(safe-area-inset-bottom)+16px)] space-y-4 settings-active-container`}
+            className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8 pb-[calc(76px+env(safe-area-inset-bottom)+16px)] space-y-4 settings-active-container`}
           >
-            {activeSection !== 'NONE' && activeSection !== 'CURRENCY' && activeSection !== 'SECURITY' && (
-              <div className="flex items-center gap-4 mb-2">
-                <h1 className="text-xl font-black text-text-main tracking-tight">
-                  {activeSection === 'THEME' && 'App Theme'}
-                  {activeSection === 'ZOOM' && 'Screen Zoom'}
-                  {activeSection === 'TYPOGRAPHY' && 'Typography'}
-                  {activeSection === 'LANGUAGE' && 'Language'}
-                  {activeSection === 'LOGO' && 'App Logo'}
-                  {activeSection === 'BACKUP' && 'Data Backup'}
-                  {activeSection === 'SERVER_CONNECTION' && 'Server Connection (APK)'}
-                </h1>
-              </div>
-            )}
 
             {activeSection === 'SERVER_CONNECTION' && (
               <div className="space-y-6">
@@ -467,7 +454,7 @@ const Settings: React.FC = () => {
                           }
                           showFeedback('API Base URL updated');
                         }}
-                        className="w-full bg-gray-50 dark:bg-zinc-800 text-text-main rounded-xl px-4 py-3 border border-gray-200 dark:border-zinc-700 font-medium focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all outline-none"
+                        className="w-full bg-gray-50 dark:bg-zinc-800 text-text-main rounded-xl px-4 py-3 border border-gray-200 dark:border-zinc-700 font-medium focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-colors outline-none"
                       />
                       <p className="text-[10px] text-gray-400 dark:text-zinc-500 mt-2 font-black uppercase">
                         Current Effective API Endpoint:
@@ -492,7 +479,7 @@ const Settings: React.FC = () => {
                           localStorage.removeItem('API_BASE_URL');
                           showFeedback('Reset to Default Server URL');
                         }}
-                        className="text-xs font-black uppercase tracking-wider text-red-500 bg-red-500/10 hover:bg-red-500/20 h-10 px-4 rounded-lg flex items-center gap-1 transition-all"
+                        className="text-xs font-black uppercase tracking-wider text-red-500 bg-red-500/10 hover:bg-red-500/20 h-10 px-4 rounded-lg flex items-center gap-1 transition-colors"
                       >
                         <X size={14} />
                         Reset to Default
@@ -537,7 +524,7 @@ const Settings: React.FC = () => {
                       <button
                         
                         onClick={exportData}
-                        className="h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all"
+                        className="h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-md cursor-pointer transition-colors"
                       >
                         <Download size={16} />
                         Cloud Export
@@ -546,7 +533,7 @@ const Settings: React.FC = () => {
                       <button
                         
                         onClick={importData}
-                        className="h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all"
+                        className="h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-md cursor-pointer transition-colors"
                       >
                         <Upload size={16} />
                         Cloud Import
@@ -650,7 +637,7 @@ const Settings: React.FC = () => {
                     <button 
                       
                       onClick={handlePasswordChange}
-                      className="w-full h-14 rounded-lg font-bold text-xs shadow-sm transition-all uppercase tracking-widest text-white"
+                      className="w-full h-14 rounded-lg font-bold text-xs shadow-sm transition-colors uppercase tracking-widest text-white"
                       style={{ backgroundColor: primaryColor }}
                     >
                       Update Password
@@ -674,7 +661,7 @@ const Settings: React.FC = () => {
                     <button 
                       
                       onClick={handleAdminPinUpdate}
-                      className="w-full h-14 rounded-lg font-bold text-xs shadow-sm transition-all uppercase tracking-widest text-white"
+                      className="w-full h-14 rounded-lg font-bold text-xs shadow-sm transition-colors uppercase tracking-widest text-white"
                       style={{ backgroundColor: primaryColor }}
                     >
                       Update PIN
@@ -728,13 +715,13 @@ const Settings: React.FC = () => {
                       <div className="flex gap-2 pb-2">
                         <button 
                           onClick={() => setShow2FASetup(false)}
-                          className="flex-1 h-14 bg-red-500 text-white rounded-lg font-bold text-xs active:scale-95 transition-all uppercase tracking-widest"
+                          className="flex-1 h-14 bg-red-500 text-white rounded-lg font-bold text-xs active:scale-95 transition-colors uppercase tracking-widest"
                         >
                           Cancel
                         </button>
                         <button 
                           onClick={handleConfirm2FA}
-                          className="flex-1 h-14 text-white rounded-lg font-bold text-xs shadow-sm active:scale-95 transition-all uppercase tracking-widest"
+                          className="flex-1 h-14 text-white rounded-lg font-bold text-xs shadow-sm active:scale-95 transition-colors uppercase tracking-widest"
                           style={{ backgroundColor: primaryColor }}
                         >
                           Verify & Enable
@@ -754,7 +741,7 @@ const Settings: React.FC = () => {
                     setZoom(Math.max(0.5, zoom - 0.1));
                     showFeedback('Zoom level decreased');
                   }}
-                  className={`w-16 h-16 flex items-center justify-center bg-transparent rounded-full text-text-main transition-all shadow-sm`}
+                  className={`w-16 h-16 flex items-center justify-center bg-transparent rounded-full text-text-main transition-colors shadow-sm`}
                 >
                   <ZoomOut size={24} />
                 </button>
@@ -768,7 +755,7 @@ const Settings: React.FC = () => {
                     setZoom(Math.min(1.5, zoom + 0.1));
                     showFeedback('Zoom level increased');
                   }}
-                  className={`w-16 h-16 flex items-center justify-center bg-transparent rounded-full text-text-main transition-all shadow-sm`}
+                  className={`w-16 h-16 flex items-center justify-center bg-transparent rounded-full text-text-main transition-colors shadow-sm`}
                 >
                   <ZoomIn size={24} />
                 </button>
@@ -783,7 +770,7 @@ const Settings: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setIsFontSelectOpen(true)}
-                      className="w-full h-14 px-4 rounded-lg bg-white dark:bg-gray-800 border border-neutral-200 dark:border-zinc-850 flex items-center justify-between font-bold text-sm text-text-main transition-all active:scale-[0.99]"
+                      className="w-full h-14 px-4 rounded-lg bg-white dark:bg-gray-800 border border-neutral-200 dark:border-zinc-850 flex items-center justify-between font-bold text-sm text-text-main transition-colors active:scale-[0.99]"
                     >
                       <span>{fontStyle}</span>
                       <ChevronDown size={16} className="text-text-muted" />
@@ -865,7 +852,7 @@ const Settings: React.FC = () => {
                           setAppThemeMode(mode.id as any);
                           showFeedback(`${mode.label} activated`);
                         }}
-                        className={`relative flex items-center justify-center gap-2 h-12 px-3 rounded-lg shadow-sm transition-all border ${
+                        className={`relative flex items-center justify-center gap-2 h-12 px-3 rounded-lg shadow-sm transition-colors border ${
                           appThemeMode === mode.id
                             ? `border-emerald-500 bg-emerald-500/10 font-bold ${(appThemeMode === 'dark' || theme === 'night-mode') ? 'text-emerald-400' : 'text-emerald-700'}`
                             : (appThemeMode === 'dark' || theme === 'night-mode')
@@ -905,7 +892,7 @@ const Settings: React.FC = () => {
                               : `${preset.name} theme activated`
                           );
                         }}
-                        className={`p-2.5 rounded-lg border flex flex-col items-center gap-1.5 transition-all text-center group cursor-pointer shadow-sm ${
+                        className={`p-2.5 rounded-lg border flex flex-col items-center gap-1.5 transition-colors text-center group cursor-pointer shadow-sm ${
                           primaryColor === preset.primary && backgroundColor === preset.bg
                             ? 'border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)] font-bold'
                             : (appThemeMode === 'dark' || theme === 'night-mode')
@@ -962,7 +949,7 @@ const Settings: React.FC = () => {
                           reader.readAsDataURL(file);
                         }
                       }}
-                      className="w-full text-xs text-text-main file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--primary)] file:text-white hover:file:opacity-90 cursor-pointer file:cursor-pointer transition-all !border-0 !outline-none"
+                      className="w-full text-xs text-text-main file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--primary)] file:text-white hover:file:opacity-90 cursor-pointer file:cursor-pointer transition-colors !border-0 !outline-none"
                     />
                   </div>
 
@@ -972,7 +959,7 @@ const Settings: React.FC = () => {
                         setWallpaper('');
                         showFeedback('App wallpaper removed');
                       }}
-                      className="w-full py-2 text-red-500 font-bold text-xs rounded-lg hover:bg-red-50 active:scale-[0.98] transition-all border border-red-500/10"
+                      className="w-full py-2 text-red-500 font-bold text-xs rounded-lg hover:bg-red-50 active:scale-[0.98] transition-colors border border-red-500/10"
                     >
                       Remove App Wallpaper
                     </button>
@@ -1001,7 +988,7 @@ const Settings: React.FC = () => {
                           reader.readAsDataURL(file);
                         }
                       }}
-                      className="w-full text-xs text-text-main file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--primary)] file:text-white hover:file:opacity-90 cursor-pointer file:cursor-pointer transition-all !border-0 !outline-none"
+                      className="w-full text-xs text-text-main file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--primary)] file:text-white hover:file:opacity-90 cursor-pointer file:cursor-pointer transition-colors !border-0 !outline-none"
                     />
                   </div>
 
@@ -1012,7 +999,7 @@ const Settings: React.FC = () => {
                         setLoginWallpaper('');
                         showFeedback('Login wallpaper removed');
                       }}
-                      className="w-full py-2 text-red-500 font-bold text-xs rounded-lg hover:bg-red-50 transition-all border border-red-500/10"
+                      className="w-full py-2 text-red-500 font-bold text-xs rounded-lg hover:bg-red-50 transition-colors border border-red-500/10"
                     >
                       Remove Login Wallpaper
                     </button>
@@ -1044,7 +1031,7 @@ const Settings: React.FC = () => {
 
             {(activeSection === 'MULTI_COLOR_SETTINGS' || activeSection === 'MULTI_COLOR_SETTINGS_APP') && (
               <div className="space-y-6">
-                <div className="p-6 bg-white dark:bg-[#121214] rounded-2xl space-y-4 dashboard-card-glow relative z-10 scale-[1.02] transition-all duration-300">
+                <div className="p-6 bg-white dark:bg-[#121214] rounded-2xl space-y-4 dashboard-card-glow relative z-10 scale-[1.02] transition-colors duration-300">
                   <div className="flex items-center gap-2 mb-2">
                     <Smartphone size={18} className="text-[var(--primary)]" />
                     <p className="text-xs font-black text-text-main uppercase">
@@ -1080,7 +1067,7 @@ const Settings: React.FC = () => {
                             : 'App background and  colors reset'
                         );
                       }}
-                      className="w-full py-2 bg-transparent text-text-muted rounded text-xs font-bold hover:bg-gray-100 dark:hover:bg-white/5 transition-all border border-dashed border-gray-300 dark:border-white/10"
+                      className="w-full py-2 bg-transparent text-text-muted rounded text-xs font-bold hover:bg-gray-100 dark:hover:bg-white/5 transition-colors border border-dashed border-gray-300 dark:border-white/10"
                     >
                       {language === 'bn' ? 'রিসেট অ্যাপ কালার' : 'Reset App Color'}
                     </button>
@@ -1088,7 +1075,7 @@ const Settings: React.FC = () => {
                 </div>
 
                 {/* Popular Presets in a SEPARATE Card */}
-                <div className="p-6 bg-white dark:bg-[#121214] rounded-2xl space-y-4 dashboard-card-glow relative z-10 scale-[1.02] transition-all duration-300">
+                <div className="p-6 bg-white dark:bg-[#121214] rounded-2xl space-y-4 dashboard-card-glow relative z-10 scale-[1.02] transition-colors duration-300">
                   <div className="flex items-center gap-2 mb-2">
                     <Palette size={18} className="text-[var(--primary)]" />
                     <p className="text-xs font-black text-text-main uppercase">
@@ -1141,7 +1128,7 @@ const Settings: React.FC = () => {
                         setLanguage(item.id);
                         showFeedback(`Language changed to ${item.label}`);
                       }}
-                      className={`relative flex items-center justify-between h-14 px-4 rounded-lg transition-all duration-300 ${
+                      className={`relative flex items-center justify-between h-14 px-4 rounded-lg transition-colors duration-300 ${
                         language === item.id
                           ? 'text-cyan-600 dark:text-cyan-400 shadow-sm'
                           : 'bg-theme-card hover:bg-gray-50 dark:hover:bg-white/5 text-text-main'
@@ -1178,7 +1165,7 @@ const Settings: React.FC = () => {
                         setSelectedCurrency(item.code);
                         showFeedback(`Currency changed to ${item.code}`);
                       }}
-                      className={`relative flex items-center justify-between h-14 px-4 rounded-lg transition-all duration-300 ${
+                      className={`relative flex items-center justify-between h-14 px-4 rounded-lg transition-colors duration-300 ${
                         selectedCurrency === item.code
                           ? 'text-cyan-600 dark:text-cyan-400 shadow-sm'
                           : 'bg-theme-card hover:bg-gray-50 dark:hover:bg-white/5 text-text-main'
@@ -1235,7 +1222,7 @@ const Settings: React.FC = () => {
                         }}
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                       />
-                      <div className="w-full py-3 px-4 text-white font-black text-[10px] uppercase tracking-widest rounded-lg text-center flex items-center justify-center gap-2 transition-all"
+                      <div className="w-full py-3 px-4 text-white font-black text-[10px] uppercase tracking-widest rounded-lg text-center flex items-center justify-center gap-2 transition-colors"
                         style={{ background: 'var(--primary)' }}
                       >
                         <Plus size={16} />
@@ -1247,7 +1234,7 @@ const Settings: React.FC = () => {
                         setLogo('/logo.svg');
                         showFeedback('Logo reset to default');
                       }}
-                      className="w-full py-3 text-red-500 font-black text-[10px] uppercase tracking-widest rounded-lg hover:bg-red-500/10 transition-all border border-red-500/20"
+                      className="w-full py-3 text-red-500 font-black text-[10px] uppercase tracking-widest rounded-lg hover:bg-red-500/10 transition-colors border border-red-500/20"
                     >
                       Reset to Default
                     </button>

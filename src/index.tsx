@@ -105,7 +105,7 @@ root.render(
         box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1), 
                     0 16px 32px -14px rgba(6, 182, 212, 0.2), 
                     0 20px 40px -16px rgba(0, 0, 0, 0.05) !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
       }
       .dark .settings-active-container div.bg-theme-card,
       .dark-mode .settings-active-container div.bg-theme-card,

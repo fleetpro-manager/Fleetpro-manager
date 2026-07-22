@@ -77,7 +77,8 @@ const ControlPanel: React.FC = () => {
     activeDetailView: activeTab, setActiveDetailView: setActiveTab,
     dashboardIcon, setDashboardIcon,
     dashboardIconColor, setDashboardIconColor,
-    setCustomBackAction
+    setCustomBackAction,
+    setCustomHeaderTitle
   } = useStore();
   
   const t = TRANSLATIONS[language];
@@ -923,54 +924,30 @@ const ControlPanel: React.FC = () => {
     return `${h}:${m} ${ampm}`;
   };
 
-  const hideControlPanelHeaderCard = activeCategory === 'PAYMENT' || activeTab === 'HIERARCHICAL_BANKS' || activeTab === 'ADVANCE_REASONS';
+
+  useEffect(() => {
+    let title: string | null = null;
+    if (selectedBankForBranch) {
+      title = `${selectedBankForBranch} BRANCHES`;
+    } else if (selectedCountryForBank) {
+      title = `${selectedCountryForBank} BANKS`;
+    } else if (selectedCountryForAddress) {
+      title = `${selectedCountryForAddress} REGIONS`;
+    } else if (activeTab && currentTab) {
+      title = currentTab.label;
+    } else if (activeCategory && currentCategory) {
+      title = currentCategory.label;
+    }
+    
+    setCustomHeaderTitle(title);
+    return () => {
+      setCustomHeaderTitle(null);
+    };
+  }, [selectedBankForBranch, selectedCountryForBank, selectedCountryForAddress, activeTab, currentTab, activeCategory, currentCategory, setCustomHeaderTitle]);
+
 
   return (
     <div className="pb-[60px] px-0.5 w-full mx-auto">
-      {(activeTab || activeCategory) && !hideControlPanelHeaderCard && (
-        <div className="flex items-center mb-6 relative z-50">
-          <div className="relative flex-1">
-            <div 
-              onClick={() => {
-                if (selectedBankForBranch) {
-                  setSelectedBankForBranch(null);
-                } else if (selectedCountryForBank) {
-                  setSelectedCountryForBank(null);
-                } else if (selectedCountryForAddress) {
-                  setSelectedCountryForAddress(null);
-                } else if (activeTab) {
-                  goBack();
-                } else if (activeCategory) {
-                  goBack();
-                } else {
-                  setView('DASHBOARD');
-                }
-              }}
-              className="w-full h-16 px-4 bg-theme-card shadow-sm rounded-xl flex items-center justify-between text-text-main font-bold text-sm uppercase tracking-wide cursor-pointer"
-              role="button"
-              tabIndex={0}
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  {activeTab && currentTab ? (
-                    <>
-                      {currentTab.icon}
-                      <span>{currentTab.label}</span>
-                    </>
-                  ) : activeCategory && currentCategory ? (
-                    <>
-                      {currentCategory.icon}
-                      <span>{currentCategory.label}</span>
-                    </>
-                  ) : (
-                    <span className="font-black"></span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {!activeCategory && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

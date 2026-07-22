@@ -425,7 +425,7 @@ const Dashboard: React.FC = () => {
                   className="group relative overflow-hidden flex flex-col items-start justify-between min-h-[96px] md:min-h-[112px] p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 border border-emerald-400/20 hover:brightness-110 active:scale-95 transition-all text-left shadow-lg"
                 >
                   {/* Watermark Icon */}
-                  <div className="absolute right-[-16px] bottom-[-16px] opacity-15 pointer-events-none transform group-hover:scale-110 transition-all duration-300">
+                  <div className="absolute right-[-16px] bottom-[-16px] opacity-15 pointer-events-none transform group-hover:scale-110 transition-transform duration-300">
                     <Wallet size={80} strokeWidth={1.5} className="text-white" />
                   </div>
 
@@ -449,7 +449,7 @@ const Dashboard: React.FC = () => {
                   className="group relative overflow-hidden flex flex-col items-start justify-between min-h-[96px] md:min-h-[112px] p-4 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 border border-orange-400/20 hover:brightness-110 active:scale-95 transition-all text-left shadow-lg"
                 >
                   {/* Watermark Icon */}
-                  <div className="absolute right-[-16px] bottom-[-16px] opacity-15 pointer-events-none transform group-hover:scale-110 transition-all duration-300">
+                  <div className="absolute right-[-16px] bottom-[-16px] opacity-15 pointer-events-none transform group-hover:scale-110 transition-transform duration-300">
                     <Clock size={80} strokeWidth={1.5} className="text-white" />
                   </div>
 
