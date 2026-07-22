@@ -1837,6 +1837,14 @@ root.render(
         -webkit-text-fill-color: rgb(239, 68, 68) !important;
       }
 
+      /* Manager Profile Section Styles */
+      .manager-tab-container {
+        border-radius: 8px !important;
+      }
+      .manager-profile-card {
+        border-radius: 10px !important;
+      }
+
      `}</style>
   </React.StrictMode>
 );

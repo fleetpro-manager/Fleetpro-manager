@@ -29,6 +29,7 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inputClassName?: string;
   hideCheckmark?: boolean;
   themeMode?: 'light' | 'dark';
+  labelBgColor?: string;
 }
 
 const getLocalContrastColor = (hexColor: any) => {
@@ -75,6 +76,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
   onLeftActionClick,
   themeMode,
   required,
+  labelBgColor,
   ...props
 }, ref) => {
   const { wallpaper, backgroundColor, theme, appThemeMode, isDarkMode: storeIsDarkMode, isNightMode, currentView, loginCardColor, user } = useStore();
@@ -620,7 +622,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
                           ? dynamicColor 
                           : undefined))),
             backgroundColor: (isFocused || hasValue) 
-              ? dynamicBgColor 
+              ? (labelBgColor || dynamicBgColor) 
               : 'transparent',
             backgroundAttachment: (isFocused || hasValue) && isSearch ? 'fixed' : undefined
           }}

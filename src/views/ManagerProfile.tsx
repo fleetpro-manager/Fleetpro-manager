@@ -497,22 +497,16 @@ export default function ManagerProfile() {
         ) : (
           <div key="simple-card" className="relative z-10 max-w-4xl mx-auto space-y-6 pb-24">
             {/* Active / Inactive Partner Selector */}
-            <div className="bg-gray-100 dark:bg-white/10 rounded-xl p-1 flex items-center relative w-full">
-              <div
-                className="absolute top-1 bottom-1 bg-purple-500 rounded-lg shadow-sm"
-                
-                
-                
-              />
+            <div className="manager-tab-container bg-gray-100 dark:bg-white/10 rounded-lg p-1.5 flex items-center relative w-full h-14">
               <button
                 onClick={() => setActivePartnerTab('active')}
-                className={`flex-1 text-center py-2.5 text-xs font-black transition-colors relative z-10 ${activePartnerTab === 'active' ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}
+                className={`flex-1 h-full text-center text-sm font-bold transition-all duration-200 relative z-10 rounded-[6px] flex items-center justify-center ${activePartnerTab === 'active' ? 'bg-emerald-600 text-white shadow-md' : 'text-red-500 hover:text-red-600 bg-transparent hover:bg-black/5 dark:hover:bg-white/5'}`}
               >
                 Active Partner
               </button>
               <button
                 onClick={() => setActivePartnerTab('inactive')}
-                className={`flex-1 text-center py-2.5 text-xs font-black transition-colors relative z-10 ${activePartnerTab === 'inactive' ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}
+                className={`flex-1 h-full text-center text-sm font-bold transition-all duration-200 relative z-10 rounded-[6px] flex items-center justify-center ${activePartnerTab === 'inactive' ? 'bg-emerald-600 text-white shadow-md' : 'text-red-500 hover:text-red-600 bg-transparent hover:bg-black/5 dark:hover:bg-white/5'}`}
               >
                 Inactive Partner
               </button>
@@ -521,7 +515,7 @@ export default function ManagerProfile() {
             {/* Simple Manager Card */}
             <div 
               onClick={() => setIsManagerFullDetailsOpen(true)}
-              className={`p-5 rounded-2xl border cursor-pointer transition-all active:scale-95 flex items-center justify-between group ${
+              className={`manager-profile-card p-5 rounded-2xl border cursor-pointer transition-all active:scale-95 flex items-center justify-between group ${
                   isDarkMode 
                     ? 'bg-[#002843] border-white/10 hover:border-purple-500/50 hover:bg-[#003853]' 
                     : 'bg-gradient-to-r from-white to-gray-50 border-gray-200 shadow-sm hover:border-purple-500/50 hover:shadow-md hover:from-purple-50 hover:to-white'
@@ -577,7 +571,7 @@ export default function ManagerProfile() {
                       <div
                         key={partner.id}
                         onClick={() => setSelectedPartnerDetails(partner)}
-                        className={`p-4 rounded-2xl border cursor-pointer transition-all active:scale-95 flex items-center justify-between group ${
+                        className={`manager-profile-card p-4 rounded-2xl border cursor-pointer transition-all active:scale-95 flex items-center justify-between group ${
                           isDarkMode 
                             ? 'bg-[#002843] border-white/10 hover:border-purple-500/50 hover:bg-[#003853]' 
                             : 'bg-gradient-to-r from-white to-gray-50 border-gray-200 shadow-sm hover:border-purple-500/50 hover:shadow-md hover:from-purple-50 hover:to-white'
@@ -657,22 +651,16 @@ export default function ManagerProfile() {
         )
       ) : (
         <div key="list" className="relative z-10 max-w-4xl mx-auto space-y-6">
-          <div className="bg-gray-100 dark:bg-white/10 rounded-xl p-1 flex items-center relative w-full mb-4">
-            <div
-              className="absolute top-1 bottom-1 bg-emerald-500 rounded-lg shadow-sm"
-              
-              
-              
-            />
+          <div className="manager-tab-container bg-gray-100 dark:bg-white/10 rounded-xl p-1.5 flex items-center relative w-full mb-4 h-14">
             <button
               onClick={() => setActiveTab('active')}
-              className={`flex-1 text-center py-2 text-sm font-bold transition-colors relative z-10 ${activeTab === 'active' ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}
+              className={`flex-1 h-full text-center text-sm font-bold transition-all duration-200 relative z-10 rounded-[6px] flex items-center justify-center ${activeTab === 'active' ? 'bg-emerald-600 text-white shadow-md' : 'text-red-500 hover:text-red-600 bg-transparent hover:bg-black/5 dark:hover:bg-white/5'}`}
             >
               Active Manager
             </button>
             <button
               onClick={() => setActiveTab('inactive')}
-              className={`flex-1 text-center py-2 text-sm font-bold transition-colors relative z-10 ${activeTab === 'inactive' ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}
+              className={`flex-1 h-full text-center text-sm font-bold transition-all duration-200 relative z-10 rounded-[6px] flex items-center justify-center ${activeTab === 'inactive' ? 'bg-emerald-600 text-white shadow-md' : 'text-red-500 hover:text-red-600 bg-transparent hover:bg-black/5 dark:hover:bg-white/5'}`}
             >
               Inactive Manager
             </button>
@@ -691,7 +679,7 @@ export default function ManagerProfile() {
                   <div
                     key={manager.id}
                     onClick={() => handleManagerClick(manager)}
-                    className={`p-5 rounded-2xl border cursor-pointer transition-all active:scale-95 flex items-center justify-between group ${
+                    className={`manager-profile-card p-5 rounded-2xl border cursor-pointer transition-all active:scale-95 flex items-center justify-between group ${
                       isDarkMode 
                         ? 'bg-[#002843] border-white/10 hover:border-purple-500/50 hover:bg-[#003853]' 
                         : 'bg-gradient-to-r from-white to-gray-50 border-gray-200 shadow-sm hover:border-purple-500/50 hover:shadow-md hover:from-purple-50 hover:to-white'
@@ -733,7 +721,7 @@ export default function ManagerProfile() {
       )}
 
       {/* Add Partner Button */}
-      {selectedManager && !isManagerFullDetailsOpen && user?.role === 'ADMIN' && (
+      {selectedManager && !isManagerFullDetailsOpen && !selectedPartnerDetails && user?.role === 'ADMIN' && (
         <button
           onClick={() => setIsAddPartnerModalOpen(true)}
           className="fixed bottom-[calc(85px+env(safe-area-inset-bottom))] lg:bottom-24 right-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white w-14 h-14 rounded-full shadow-lg shadow-purple-500/30 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 z-50"
@@ -758,7 +746,7 @@ export default function ManagerProfile() {
           style={{ zIndex: 9999 }}
           className="fixed inset-0 w-full h-full flex items-center justify-center p-4 bg-black/75 backdrop-blur-3xl animate-in fade-in duration-300"
         >
-          <div className={`w-full max-w-md rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden border ${isDarkMode ? 'bg-gradient-to-br from-[#002843] via-[#001830] to-[#12002b] border-white/10' : 'bg-gradient-to-br from-white via-purple-50 to-indigo-50 border-purple-200'}`}>
+          <div className={`w-full max-w-md rounded-[10px] shadow-2xl flex flex-col max-h-[85vh] overflow-hidden border ${isDarkMode ? 'bg-gradient-to-br from-[#002843] via-[#001830] to-[#12002b] border-white/10' : 'bg-gradient-to-br from-white via-purple-50 to-indigo-50 border-purple-200'}`}>
             <div className="p-6 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 flex justify-between items-center relative overflow-hidden">
               <div className="absolute inset-0 bg-white/5 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px] opacity-20"></div>
               <h3 className="font-black text-xl text-white relative z-10 flex items-center gap-2">
@@ -769,7 +757,7 @@ export default function ManagerProfile() {
                 onClick={() => setIsAddPartnerModalOpen(false)}
                 className="w-8 h-8 rounded-full flex items-center justify-center transition-colors bg-white/20 hover:bg-white/30 text-white relative z-10 backdrop-blur-sm"
               >
-                <ArrowLeft size={16} />
+                <X size={16} />
               </button>
             </div>
 
@@ -782,6 +770,7 @@ export default function ManagerProfile() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 icon={<Search size={18} />}
                 className="h-14 font-semibold"
+                labelBgColor={isDarkMode ? '#002843' : '#ffffff'}
               />
             </div>
 
@@ -805,11 +794,12 @@ export default function ManagerProfile() {
                         }
                         setIsAddPartnerModalOpen(false);
                       }}
-                      className={`p-4 rounded-2xl border cursor-pointer transition-all active:scale-95 flex flex-col group ${
+                      className={`p-4 rounded-[10px] border cursor-pointer transition-all active:scale-95 flex flex-col group ${
                         isDarkMode 
                           ? 'bg-[#002843] border-white/10 hover:border-purple-500/50 hover:bg-[#003853]' 
-                          : 'bg-gradient-to-r from-white to-gray-50 border-gray-200 shadow-sm hover:border-purple-500/50 hover:shadow-md hover:from-purple-50 hover:to-white'
+                          : 'border-gray-200 shadow-sm hover:border-purple-500/50 hover:shadow-md'
                       }`}
+                      style={isDarkMode ? {} : { backgroundColor: '#ebebeb' }}
                     >
                       {/* Header: Name and Avatar */}
                       <div className="flex items-center gap-3 pb-2">
@@ -819,7 +809,7 @@ export default function ManagerProfile() {
                           {u.avatar ? <img src={u.avatar} alt={u.name} className="w-full h-full object-cover" /> : <Users size={16} />}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className={`font-black truncate text-sm uppercase ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{u.name || 'No Name'}</h4>
+                          <h4 className={`font-black truncate text-sm uppercase ${isDarkMode ? 'text-white' : 'text-black'}`}>{u.name || 'No Name'}</h4>
                         </div>
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all ${
                           isDarkMode ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'
@@ -835,23 +825,23 @@ export default function ManagerProfile() {
                       <div className="pt-1.5 space-y-1.5 text-xs">
                         {/* User ID Row */}
                         <div className="flex justify-between items-center py-1 border-b opacity-70 border-card-divider">
-                          <span className="text-gray-400 dark:text-gray-500 font-bold">User ID</span>
-                          <span className={`font-mono font-black ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+                          <span className={`${isDarkMode ? 'text-gray-400 dark:text-gray-500' : 'text-black'} font-bold`}>User ID</span>
+                          <span className={`font-mono font-black ${isDarkMode ? 'text-purple-400' : 'text-black'}`}>
                             {u.userId || 'N/A'}
                           </span>
                         </div>
 
                         {/* Mobile Row */}
                         <div className="flex justify-between items-center py-1 border-b opacity-70 border-card-divider">
-                          <span className="text-gray-400 dark:text-gray-500 font-bold">Mobile Number</span>
-                          <span className={`font-black flex items-center gap-1 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                          <span className={`${isDarkMode ? 'text-gray-400 dark:text-gray-500' : 'text-black'} font-bold`}>Mobile Number</span>
+                          <span className={`font-black flex items-center gap-1 ${isDarkMode ? 'text-gray-200' : 'text-black'}`}>
                             <Phone size={10} className="opacity-60" /> {u.mobileNumber || u.mobile || 'No mobile'}
                           </span>
                         </div>
 
                         {/* Status Row */}
                         <div className="flex justify-between items-center py-1">
-                          <span className="text-gray-400 dark:text-gray-500 font-bold">{t('STATUS')}</span>
+                          <span className={`${isDarkMode ? 'text-gray-400 dark:text-gray-500' : 'text-black'} font-bold`}>{t('STATUS')}</span>
                           <span className={`font-black ${
                             isAlreadyLinked 
                               ? 'text-emerald-500 dark:text-emerald-400' 
@@ -887,7 +877,7 @@ export default function ManagerProfile() {
                 
                 
                 
-                className="relative w-full bg-card-bg max-w-md border border-border-main/80 rounded-3xl overflow-hidden shadow-2xl z-10 flex flex-col max-h-[80vh]"
+                className="relative w-full bg-card-bg max-w-md border border-border-main/80 rounded-[10px] overflow-hidden shadow-2xl z-10 flex flex-col max-h-[80vh]"
                 style={{ backgroundColor: isDarkMode ? '#002843' : '#ffffff' }}
               >
                 <div className="px-6 py-5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex justify-between items-center shrink-0">
@@ -911,7 +901,8 @@ export default function ManagerProfile() {
                     <div 
                       key={u.id}
                       onClick={() => handleSelectUser(u)}
-                      className="bg-background-main border border-border-main/50 hover:border-purple-500/50 rounded-2xl p-4 flex items-center gap-4 cursor-pointer transition-all hover:shadow-sm"
+                      className={`border border-border-main/50 hover:border-purple-500/50 rounded-[10px] p-4 flex items-center gap-4 cursor-pointer transition-all hover:shadow-sm ${isDarkMode ? 'bg-background-main' : ''}`}
+                      style={isDarkMode ? {} : { backgroundColor: '#ebebeb' }}
                     >
                       <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center shrink-0 overflow-hidden">
                         {u.avatar ? (
@@ -921,8 +912,8 @@ export default function ManagerProfile() {
                         )}
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{u.name}</p>
-                        <p className="text-xs font-medium mt-0.5 text-gray-600 dark:text-gray-400">ID: {u.userId || u.id.slice(0, 8)}</p>
+                        <p className={`text-sm font-bold ${isDarkMode ? 'text-gray-100' : 'text-black'}`}>{u.name}</p>
+                        <p className={`text-xs font-medium mt-0.5 ${isDarkMode ? 'text-gray-400' : 'text-black'}`}>ID: {u.userId || u.id.slice(0, 8)}</p>
                       </div>
                     </div>
                   ))}
