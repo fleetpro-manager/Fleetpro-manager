@@ -139,8 +139,31 @@
   }
 }
 </script>
+<script>
+  // Prevent pinch zoom
+  document.addEventListener('touchstart', function(event) {
+    if (event.touches.length > 1) {
+      event.preventDefault();
+    }
+  }, { passive: false });
+
+  // Prevent double tap zoom
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function(event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, { passive: false });
+  
+  // Prevent gesture zoom on iOS
+  document.addEventListener('gesturestart', function(e) {
+    e.preventDefault();
+  });
+</script>
 </head>
-<body class="bg-[#207E4A] text-white transition-colors duration-300">
+<body class="transition-colors duration-300" style="background-color: var(--app-bg, #000000);">
     <div id="root"></div>
 <script type="module" src="/src/index.tsx"></script>
 </body>

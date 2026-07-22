@@ -346,6 +346,7 @@ root.render(
         overflow-x: hidden !important;
         position: relative !important;
         width: 100% !important;
+        height: 100% !important;
         max-width: 100% !important;
         -webkit-text-size-adjust: 100% !important;
         -moz-text-size-adjust: 100% !important;
