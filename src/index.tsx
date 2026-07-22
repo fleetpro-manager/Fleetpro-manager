@@ -718,7 +718,8 @@ root.render(
         border-style: solid !important;
         transition: none !important;
       }
- 
+
+  
       /* Clean, theme-agnostic search container styles driven by dynamic inline variables */
       .search-field-container,
       .input-field-container:has(input[name*="search" i]),

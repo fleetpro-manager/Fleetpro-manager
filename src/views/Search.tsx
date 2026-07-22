@@ -132,7 +132,7 @@ const Search: React.FC = () => {
       
       
       
-      className="h-full flex flex-col pb-[100px]"
+      className="h-full flex flex-col px-global pt-global pb-0"
     >
       {/* Main Tabs */}
       {isAdmin && (
@@ -350,7 +350,7 @@ const Search: React.FC = () => {
         </div>
       )}
 
-      <div  className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto pt-2 pb-[calc(76px+env(safe-area-inset-bottom)+40px)] scrollbar-hide">
         {!activeTab ? (
           <div    className="h-full flex flex-col items-center justify-center text-text-muted">
             <SearchIcon size={64} className="mb-4 text-text-muted" />
@@ -370,7 +370,7 @@ const Search: React.FC = () => {
                     setSelectedUser(u);
                     setView('USER_PROFILE');
                   }}
-                  className="bg-theme-card py-3 px-5 rounded-[16px] flex items-center justify-between shadow-sm border-gray-100 dark:border-white/5 cursor-pointer group min-h-[75px]"
+                  className="bg-theme-card py-3 px-5 rounded-[10px] flex items-center justify-between shadow-sm border-gray-100 dark:border-white/5 cursor-pointer group min-h-[75px]"
                 >
                   <div className="flex items-center gap-4">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
