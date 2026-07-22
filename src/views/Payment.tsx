@@ -2045,7 +2045,7 @@ const PaymentView: React.FC = () => {
 
               {/* Content */}
               <div 
-                className="flex-1 overflow-y-auto pt-4 sm:pt-6 lg:pt-8 px-4 space-y-4 pb-32"
+                className="flex-1 overflow-y-auto pt-global px-4 space-y-4 pb-32"
               >
                 {(() => {
                   const filteredSalaryMonths = salaryAndCommissionMonths.filter(val => {
@@ -2734,7 +2734,7 @@ const PaymentView: React.FC = () => {
 
               {/* Content */}
               <div 
-                className="flex-1 overflow-y-auto pt-4 sm:pt-6 lg:pt-8 px-4 space-y-4 pb-32"
+                className="flex-1 overflow-y-auto pt-global px-4 space-y-4 pb-32"
                 
                 
                 
@@ -3782,7 +3782,7 @@ const PaymentView: React.FC = () => {
                   return (
                     <>
                       <div 
-                        className="flex-1 overflow-y-auto pt-4 sm:pt-6 lg:pt-8 px-4 space-y-4 pb-12"
+                        className="flex-1 overflow-y-auto pt-global px-4 space-y-4 pb-12"
                         
                         
                         
@@ -4013,7 +4013,7 @@ const PaymentView: React.FC = () => {
                   return (
                     <>
                       <div 
-                        className="flex-1 overflow-y-auto pt-4 sm:pt-6 lg:pt-8 px-4 space-y-4 pb-12"
+                        className="flex-1 overflow-y-auto pt-global px-4 space-y-4 pb-12"
                         
                         
                         
@@ -4156,7 +4156,7 @@ const PaymentView: React.FC = () => {
       {/* Global Delete Button Removed as per request */}
 
 
-      <div className="z-20 pt-4 pb-4 px-1 shrink-0">
+      <div className="z-20 pb-4 px-1 shrink-0">
         {/* Summary Card */}
         <div 
           className="relative overflow-hidden rounded-xl p-5 min-h-[190px] md:min-h-[220px] flex flex-col justify-between text-white shadow-2xl bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#0f172a] border border-white/10"

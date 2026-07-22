@@ -294,7 +294,7 @@ const Settings: React.FC = () => {
         {!activeSection ? (
           <div 
             key="main-list"
-            className="absolute inset-0 w-full h-full flex flex-col overflow-y-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8 pb-[calc(76px+env(safe-area-inset-bottom)+16px)] space-y-4"
+            className="absolute inset-0 w-full h-full flex flex-col overflow-y-auto px-4 sm:px-6 lg:px-8 pt-global pb-[calc(76px+env(safe-area-inset-bottom)+16px)] space-y-4"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <MenuItem 
@@ -419,7 +419,7 @@ const Settings: React.FC = () => {
         ) : (
           <div 
             key={activeSection}
-            className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8 pb-[calc(76px+env(safe-area-inset-bottom)+16px)] space-y-4 settings-active-container`}
+            className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto px-4 sm:px-6 lg:px-8 pt-global pb-[calc(76px+env(safe-area-inset-bottom)+16px)] space-y-4 settings-active-container`}
           >
 
             {activeSection === 'SERVER_CONNECTION' && (

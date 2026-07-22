@@ -148,7 +148,7 @@ root.render(
         --input-border-color: rgba(0, 0, 0, 0.45);
         --input-bg-solid: var(--card-bg-solid, var(--page-bg-solid, #ffffff));
         --global-divider: rgba(0, 0, 0, 0.2);
-        --global-pt: 1.25rem; /* Default pt-5 */
+        --global-pt: 1rem; /* Default pt-4 */
         --global-pt-sm: 1.5rem; /* Default pt-6 */
         --global-pt-lg: 2rem; /* Default pt-8 */
       }
