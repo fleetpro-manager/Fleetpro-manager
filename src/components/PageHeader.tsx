@@ -187,6 +187,7 @@ const PageHeader: React.FC = () => {
                 if (activeSection === 'BALANCE_SUBPAGE') return 'Available Balance';
                 if (activeSection === 'DEPOSIT_SUBPAGE') return 'Total Deposit';
                 if (activeSection === 'LINK_USER') return language === 'bn' ? 'ইউজার লিঙ্ক করুন' : 'Link User';
+                if (activeSection === 'BIOMETRICS') return language === 'bn' ? 'বায়োমেট্রিক সিকিউরিটি' : 'Biometric Security';
                 if (activeSection === 'INCOME' || activeSection === 'DEDUCTION') return t.MY_INCOME || 'My Income';
                 return t[activeSection] || activeSection.split('_').join(' ');
               }

@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store';
 import { TRANSLATIONS, THEMES, PRESET_BACKGROUNDS, LIGHT_THEME_PRESETS } from '../constants';
 import MultiColorCreator from '@/components/MultiColorCreator';
-import { Moon, Sun, Diamond, Globe, Check, ChevronDown, Palette, LogOut, Settings as SettingsIcon, ZoomIn, ZoomOut, Image as ImageIcon, CreditCard, Lock, Shield, Smartphone, Copy, ChevronLeft, ChevronRight, User as UserIcon, X, Plus, Download, Upload, Database, LayoutGrid, RefreshCw, ArrowLeft } from 'lucide-react';
+import { Moon, Sun, Diamond, Globe, Check, ChevronDown, Palette, LogOut, Settings as SettingsIcon, ZoomIn, ZoomOut, Image as ImageIcon, CreditCard, Lock, Shield, Smartphone, Copy, ChevronLeft, ChevronRight, User as UserIcon, X, Plus, Download, Upload, Database, LayoutGrid, RefreshCw, ArrowLeft, Fingerprint, Scan } from 'lucide-react';
 
 import { Theme, Language } from '../types';
 import InputField from '../components/InputField';
@@ -11,11 +11,43 @@ import { QRCodeSVG } from 'qrcode.react';
 import { storageService } from '@/services/storageService';
 import GlobalFullscreenSelect from '@/components/GlobalFullscreenSelect';
 import * as OTPAuth from 'otpauth';
+import { BiometricPrompt } from '../components/BiometricPrompt';
 
 const Settings: React.FC = () => {
   const { theme, setTheme, language, setLanguage, user, setUser, updateUser, logout, setView, zoom, setZoom, wallpaper, setWallpaper, loginWallpaper, setLoginWallpaper, loginBackgroundColor, setLoginBackgroundColor, backgroundColor, setBackgroundColor, fontStyle, setFontStyle, fontSize, setFontSize, fontBold, setFontBold, currencies, selectedCurrency, setSelectedCurrency, showFeedback, setSelectedUser, headerBg, setHeaderBg, setNavBg, appThemeMode, setAppThemeMode, appGrid, setAppGrid, activeSection, setActiveSection, logo, setLogo, exportData, importData, exportLocalData, importLocalData, currentThemeObj, adminPin, setAdminPin, confirmAction, primaryColor: storePrimaryColor, setPrimaryColor, setNavigationDirection, navigationDirection } = useStore();
   const t = TRANSLATIONS[language];
   const primaryColor = storePrimaryColor || currentThemeObj?.primary || '#3b82f6';
+
+  // Biometrics States
+  const [isLoginFingerprint, setIsLoginFingerprint] = useState(() => localStorage.getItem('fleetpro_biometric_login_enabled') === 'true');
+  const [isFaceLock, setIsFaceLock] = useState(() => localStorage.getItem('fleetpro_biometric_face_enabled') === 'true');
+  const [isTransactionFingerprint, setIsTransactionFingerprint] = useState(() => localStorage.getItem('fleetpro_biometric_transaction_enabled') === 'true');
+  
+  const [isBioPromptOpen, setIsBioPromptOpen] = useState(false);
+  const [bioPromptMode, setBioPromptMode] = useState<'fingerprint' | 'face' | 'transaction'>('fingerprint');
+  const [pendingToggleType, setPendingToggleType] = useState<'login' | 'face' | 'transaction' | null>(null);
+
+  const handleBioSuccess = () => {
+    setIsBioPromptOpen(false);
+    if (pendingToggleType === 'login') {
+      setIsLoginFingerprint(true);
+      localStorage.setItem('fleetpro_biometric_login_enabled', 'true');
+      if (user) {
+        localStorage.setItem('fleetpro_biometric_username', user.userId || user.email || user.id);
+        localStorage.setItem('fleetpro_biometric_password_hash', user.password || '');
+      }
+      showFeedback(language === 'bn' ? 'লগইন ফিঙ্গারপ্রিন্ট সফলভাবে সক্রিয় করা হয়েছে!' : 'Login Fingerprint activated successfully!');
+    } else if (pendingToggleType === 'face') {
+      setIsFaceLock(true);
+      localStorage.setItem('fleetpro_biometric_face_enabled', 'true');
+      showFeedback(language === 'bn' ? 'ফেস লক সফলভাবে সক্রিয় করা হয়েছে!' : 'Face Lock activated successfully!');
+    } else if (pendingToggleType === 'transaction') {
+      setIsTransactionFingerprint(true);
+      localStorage.setItem('fleetpro_biometric_transaction_enabled', 'true');
+      showFeedback(language === 'bn' ? 'ট্রানজেকশন ফিঙ্গারপ্রিন্ট সফলভাবে সক্রিয় করা হয়েছে!' : 'Transaction Fingerprint activated successfully!');
+    }
+    setPendingToggleType(null);
+  };
   
   const handleLogout = () => {
     confirmAction(
@@ -330,6 +362,15 @@ const Settings: React.FC = () => {
                 onClick={() => {
                   setNavigationDirection('forward');
                   setActiveSection('SECURITY');
+                }} 
+                color={primaryColor}
+              />
+              <MenuItem 
+                icon={<Fingerprint size={20} />} 
+                title={language === 'bn' ? 'বায়োমেট্রিক সিকিউরিটি' : 'Biometric Security'} 
+                onClick={() => {
+                  setNavigationDirection('forward');
+                  setActiveSection('BIOMETRICS');
                 }} 
                 color={primaryColor}
               />
@@ -1242,8 +1283,154 @@ const Settings: React.FC = () => {
                 </div>
               </div>
             )}
+
+            {activeSection === 'BIOMETRICS' && (
+              <div className="space-y-6 allow-animation">
+                <div className="p-4 bg-theme-card rounded-lg space-y-6">
+                  <div className="flex flex-col items-center text-center gap-2 mb-4">
+                    <div className="w-16 h-16 bg-[var(--primary)]/10 rounded-full flex items-center justify-center mb-2" style={{ color: primaryColor, backgroundColor: `${primaryColor}10` }}>
+                      <Fingerprint size={32} />
+                    </div>
+                    <h2 className="text-lg font-black text-text-main uppercase">
+                      {language === 'bn' ? 'বায়োমেট্রিক সিকিউরিটি' : 'Biometric Security'}
+                    </h2>
+                    <p className="text-xs text-text-muted font-bold max-w-[280px]">
+                      {language === 'bn' ? 'আপনার ডিভাইস বায়োমেট্রিকস (ফিঙ্গারপ্রিন্ট বা ফেস লক) ব্যবহার করে অ্যাপ্লিকেশন সুরক্ষিত করুন।' : 'Secure your application using your device biometrics (Fingerprint or Face Lock).'}
+                    </p>
+                  </div>
+
+                  {/* Settings toggles */}
+                  <div className="space-y-4 divide-y divide-gray-100 dark:divide-white/5">
+                    {/* Item 1: Login Fingerprint */}
+                    <div className="flex items-center justify-between pt-3 first:pt-0">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-gray-50 dark:bg-white/5 text-text-main">
+                          <Fingerprint size={20} />
+                        </div>
+                        <div className="text-left">
+                          <p className="font-bold text-sm text-text-main">
+                            {language === 'bn' ? 'লগইন ফিঙ্গারপ্রিন্ট' : 'Login Fingerprint'}
+                          </p>
+                          <p className="text-[10px] text-text-muted font-semibold">
+                            {language === 'bn' ? 'অ্যাপ্লিকেশনে ফিঙ্গারপ্রিন্ট দিয়ে লগইন করুন' : 'Authenticate using fingerprint on app startup'}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Modern Switch */}
+                      <button 
+                        onClick={() => {
+                          if (isLoginFingerprint) {
+                            setIsLoginFingerprint(false);
+                            localStorage.removeItem('fleetpro_biometric_login_enabled');
+                            localStorage.removeItem('fleetpro_biometric_username');
+                            localStorage.removeItem('fleetpro_biometric_password_hash');
+                            showFeedback(language === 'bn' ? 'লগইন ফিঙ্গারপ্রিন্ট নিষ্ক্রিয় করা হয়েছে' : 'Login Fingerprint disabled');
+                          } else {
+                            setBioPromptMode('fingerprint');
+                            setPendingToggleType('login');
+                            setIsBioPromptOpen(true);
+                          }
+                        }}
+                        className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${isLoginFingerprint ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-zinc-700'}`}
+                        style={{ backgroundColor: isLoginFingerprint ? '#10b981' : undefined }}
+                      >
+                        <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${isLoginFingerprint ? 'translate-x-6' : 'translate-x-0'}`} />
+                      </button>
+                    </div>
+
+                    {/* Item 2: Face Lock */}
+                    <div className="flex items-center justify-between pt-3">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-gray-50 dark:bg-white/5 text-text-main">
+                          <Scan size={20} />
+                        </div>
+                        <div className="text-left">
+                          <p className="font-bold text-sm text-text-main">
+                            {language === 'bn' ? 'ফেস লক' : 'Face Lock'}
+                          </p>
+                          <p className="text-[10px] text-text-muted font-semibold">
+                            {language === 'bn' ? 'মুখমণ্ডল স্ক্যান করে অ্যাপ আনলক করুন' : 'Unlock app using face recognition'}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Modern Switch */}
+                      <button 
+                        onClick={() => {
+                          if (isFaceLock) {
+                            setIsFaceLock(false);
+                            localStorage.removeItem('fleetpro_biometric_face_enabled');
+                            showFeedback(language === 'bn' ? 'ফেস লক নিষ্ক্রিয় করা হয়েছে' : 'Face Lock disabled');
+                          } else {
+                            setBioPromptMode('face');
+                            setPendingToggleType('face');
+                            setIsBioPromptOpen(true);
+                          }
+                        }}
+                        className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${isFaceLock ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-zinc-700'}`}
+                        style={{ backgroundColor: isFaceLock ? '#10b981' : undefined }}
+                      >
+                        <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${isFaceLock ? 'translate-x-6' : 'translate-x-0'}`} />
+                      </button>
+                    </div>
+
+                    {/* Item 3: Transaction Fingerprint */}
+                    <div className="flex items-center justify-between pt-3">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-gray-50 dark:bg-white/5 text-text-main">
+                          <Fingerprint size={20} className="text-amber-500" />
+                        </div>
+                        <div className="text-left">
+                          <p className="font-bold text-sm text-text-main">
+                            {language === 'bn' ? 'ট্রানজেকশন ফিঙ্গার' : 'Transaction Fingerprint'}
+                          </p>
+                          <p className="text-[10px] text-text-muted font-semibold">
+                            {language === 'bn' ? 'লেনদেন অনুমোদনের জন্য ফিঙ্গারপ্রিন্ট ব্যবহার করুন' : 'Authorize transactions with fingerprint'}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Modern Switch */}
+                      <button 
+                        onClick={() => {
+                          if (isTransactionFingerprint) {
+                            setIsTransactionFingerprint(false);
+                            localStorage.removeItem('fleetpro_biometric_transaction_enabled');
+                            showFeedback(language === 'bn' ? 'ট্রানজেকশন ফিঙ্গার নিষ্ক্রিয় করা হয়েছে' : 'Transaction Fingerprint disabled');
+                          } else {
+                            setBioPromptMode('transaction');
+                            setPendingToggleType('transaction');
+                            setIsBioPromptOpen(true);
+                          }
+                        }}
+                        className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${isTransactionFingerprint ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-zinc-700'}`}
+                        style={{ backgroundColor: isTransactionFingerprint ? '#10b981' : undefined }}
+                      >
+                        <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${isTransactionFingerprint ? 'translate-x-6' : 'translate-x-0'}`} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
+
+        {/* Biometric Prompt Portal Overlay */}
+        <BiometricPrompt 
+          isOpen={isBioPromptOpen}
+          mode={bioPromptMode}
+          action="enroll"
+          language={language}
+          username={user?.userId || user?.email || user?.id || 'biometric_user'}
+          userId={user?.id || 'biometric_user'}
+          onClose={() => {
+            setIsBioPromptOpen(false);
+            setPendingToggleType(null);
+          }}
+          onSuccess={handleBioSuccess}
+        />
     </div>
   );
 

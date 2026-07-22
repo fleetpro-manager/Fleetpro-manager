@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useStore } from '../store';
 import { User } from '../types';
-import { Truck, User as UserIcon, Shield, Menu, ChevronLeft, Home, Clock, Calendar, Cloud, LifeBuoy, Info, Globe, Check, Diamond, Phone, Mail, Facebook, Instagram, Youtube, MessageCircle, User as UserProfileIcon, ChevronDown, Eye, EyeOff, MapPin, Building, Zap, ShieldAlert, Loader2, Palette, Image as ImageIcon, Sun, Moon, Lock, Copy, ExternalLink, Sparkles, Camera } from 'lucide-react';
+import { Truck, User as UserIcon, Shield, Menu, ChevronLeft, Home, Clock, Calendar, Cloud, LifeBuoy, Info, Globe, Check, Diamond, Phone, Mail, Facebook, Instagram, Youtube, MessageCircle, User as UserProfileIcon, ChevronDown, Eye, EyeOff, MapPin, Building, Zap, ShieldAlert, Loader2, Palette, Image as ImageIcon, Sun, Moon, Lock, Copy, ExternalLink, Sparkles, Camera, Fingerprint, X } from 'lucide-react';
 
 import { TRANSLATIONS, THEMES } from '../constants';
 import { isExpired } from '../utils/dateUtils';
@@ -15,6 +15,7 @@ import PrayerTimes from '@/views/PrayerTimes';
 import { getContrastColor } from '../utils/colorUtils';
 import * as OTPAuth from 'otpauth';
 import { getFirebaseCollection, deleteFirebaseDoc } from '../services/firebase';
+import { BiometricPrompt } from '../components/BiometricPrompt';
 
 const WhatsAppIcon: React.FC<{ size?: number; className?: string }> = ({ size = 16, className = "" }) => (
   <svg 
@@ -316,6 +317,259 @@ const Login: React.FC = () => {
   const [adminPin, setAdminPin] = useState('');
   const [pendingAdminUser, setPendingAdminUser] = useState<any>(null);
   const t = TRANSLATIONS[language];
+
+  // Biometrics States & Handlers
+  const [isBioPromptOpen, setIsBioPromptOpen] = useState(false);
+  const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
+  const [setupUsername, setSetupUsername] = useState('');
+  const [setupPassword, setSetupPassword] = useState('');
+  const [setupError, setSetupError] = useState('');
+  const [setupLoading, setSetupLoading] = useState(false);
+
+  const isBn = language === 'bn';
+
+  const handleFingerprintIconClick = () => {
+    const isBioEnabled = localStorage.getItem('fleetpro_biometric_login_enabled') === 'true';
+    if (isBioEnabled) {
+      setIsBioPromptOpen(true);
+    } else {
+      setSetupUsername('');
+      setSetupPassword('');
+      setSetupError('');
+      setIsSetupModalOpen(true);
+    }
+  };
+
+  const handleVerifyAndSetupBio = async () => {
+    if (!setupUsername.trim()) {
+      const err = isBn ? 'ইউজার আইডি বা ইমেইল দিন' : 'Please enter User ID or Email';
+      setSetupError(err);
+      showFeedback(err, 'error');
+      return;
+    }
+    if (!setupPassword.trim()) {
+      const err = isBn ? 'পাসওয়ার্ড দিন' : 'Please enter Password';
+      setSetupError(err);
+      showFeedback(err, 'error');
+      return;
+    }
+
+    setSetupLoading(true);
+    setSetupError('');
+
+    try {
+      let usersCol: any[] = [];
+      let adminsCol: any[] = [];
+      try {
+        usersCol = await getFirebaseCollection('users') || [];
+        adminsCol = await getFirebaseCollection('admins') || [];
+      } catch (fbErr) {
+        console.warn("Firestore fetch failed in bio verify, using fallback", fbErr);
+      }
+
+      const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const allAvailableUsers = [
+        ...(usersCol.length > 0 ? usersCol : (users && users.length > 0 ? users : storedUsers)).filter((u: any) => u.id !== 'Admin'),
+        ...adminsCol.map(a => ({ ...a, role: 'ADMIN' }))
+      ];
+
+      const input = setupUsername.trim().toLowerCase();
+      let foundUser = allAvailableUsers.find((u: any) => {
+        const uId = (u.id || '').toString().toLowerCase();
+        const uUserId = (u.userId || '').toString().toLowerCase();
+        const uEmail = (u.email || '').toString().toLowerCase();
+        const uLoginEmail = (u.loginEmail || '').toString().toLowerCase();
+        return uUserId === input || uEmail === input || uLoginEmail === input || uId === input;
+      });
+
+      if (!foundUser && (input === 'admin' || input === 'mdhassanahamed15@gmail.com')) {
+        foundUser = {
+          id: 'Admin',
+          name: 'Admin',
+          email: 'mdhassanahamed15@gmail.com',
+          role: 'ADMIN',
+          status: 'ENABLED',
+          password: 'Admin',
+          avatar: 'https://picsum.photos/seed/admin/200',
+          isFirstLogin: true
+        };
+      }
+
+      if (!foundUser) {
+        setSetupLoading(false);
+        const err = isBn ? 'ব্যবহারকারী পাওয়া যায়নি!' : 'User account not found!';
+        setSetupError(err);
+        showFeedback(err, 'error');
+        return;
+      }
+
+      const storedPassword = (foundUser.password || '').toString();
+      const inputPasswordTrimmed = setupPassword.trim();
+      const isHashed = storedPassword.startsWith('$2a$') || storedPassword.startsWith('$2b$') || storedPassword.startsWith('$2y$');
+      
+      let isPasswordCorrect = false;
+      if (isHashed) {
+        isPasswordCorrect = await bcrypt.compare(inputPasswordTrimmed, storedPassword);
+        if (!isPasswordCorrect && foundUser.role === 'ADMIN' && (foundUser.isFirstLogin !== false) && inputPasswordTrimmed.toLowerCase() === 'admin') {
+          isPasswordCorrect = true;
+        }
+      } else {
+        isPasswordCorrect = storedPassword.trim() === inputPasswordTrimmed || 
+                            storedPassword === inputPasswordTrimmed ||
+                            (foundUser.role === 'ADMIN' && inputPasswordTrimmed.toLowerCase() === 'admin');
+      }
+
+      if (!isPasswordCorrect) {
+        setSetupLoading(false);
+        const err = isBn ? 'ভুল পাসওয়ার্ড!' : 'Incorrect password!';
+        setSetupError(err);
+        showFeedback(err, 'error');
+        return;
+      }
+
+      // Validated successfully! Close setup modal, show toast feedback, and open enrollment scanner
+      setSetupLoading(false);
+      setIsSetupModalOpen(false);
+      showFeedback(
+        isBn 
+          ? 'অ্যাকাউন্ট ভেরিফিকেশন সফল হয়েছে! আপনার ফিঙ্গারপ্রিন্ট সেন্সরে চেপে ধরে রাখুন।' 
+          : 'Account verification successful! Press and hold your finger on the sensor.',
+        'success'
+      );
+      setIsBioPromptOpen(true);
+    } catch (err: any) {
+      console.error(err);
+      setSetupLoading(false);
+      const errMsg = 'Error: ' + (err.message || String(err));
+      setSetupError(errMsg);
+      showFeedback(errMsg, 'error');
+    }
+  };
+
+  const handleBioLoginSuccess = async () => {
+    setIsBioPromptOpen(false);
+    
+    const isBioEnabled = localStorage.getItem('fleetpro_biometric_login_enabled') === 'true';
+    if (!isBioEnabled) {
+      // Setup activation completed successfully!
+      try {
+        const usersCol = await getFirebaseCollection('users') || [];
+        const adminsCol = await getFirebaseCollection('admins') || [];
+        const allAvailableUsers = [
+          ...usersCol.filter((u: any) => u.id !== 'Admin'),
+          ...adminsCol.map(a => ({ ...a, role: 'ADMIN' }))
+        ];
+        
+        const input = setupUsername.trim().toLowerCase();
+        let foundUser = allAvailableUsers.find((u: any) => {
+          const uId = (u.id || '').toString().toLowerCase();
+          const uUserId = (u.userId || '').toString().toLowerCase();
+          const uEmail = (u.email || '').toString().toLowerCase();
+          const uLoginEmail = (u.loginEmail || '').toString().toLowerCase();
+          return uUserId === input || uEmail === input || uLoginEmail === input || uId === input;
+        });
+
+        if (!foundUser && (input === 'admin' || input === 'mdhassanahamed15@gmail.com')) {
+          foundUser = {
+            id: 'Admin',
+            name: 'Admin',
+            email: 'mdhassanahamed15@gmail.com',
+            role: 'ADMIN',
+            status: 'ENABLED',
+            password: 'Admin',
+            avatar: 'https://picsum.photos/seed/admin/200',
+            isFirstLogin: true
+          };
+        }
+
+        if (foundUser) {
+          localStorage.setItem('fleetpro_biometric_login_enabled', 'true');
+          localStorage.setItem('fleetpro_biometric_username', foundUser.userId || foundUser.email || foundUser.id);
+          localStorage.setItem('fleetpro_biometric_password_hash', foundUser.password || '');
+          showFeedback(isBn ? 'ফিঙ্গারপ্রিন্ট সফলভাবে সক্রিয় করা হয়েছে!' : 'Fingerprint login activated successfully!');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      return;
+    }
+
+    // Direct authenticating login
+    const savedUserKey = localStorage.getItem('fleetpro_biometric_username');
+    if (!savedUserKey) {
+      showFeedback('Biometric user not found', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const usersCol = await getFirebaseCollection('users') || [];
+      const adminsCol = await getFirebaseCollection('admins') || [];
+      const allAvailableUsers = [
+        ...usersCol.filter((u: any) => u.id !== 'Admin'),
+        ...adminsCol.map(a => ({ ...a, role: 'ADMIN' }))
+      ];
+
+      const input = savedUserKey.trim().toLowerCase();
+      let foundUser = allAvailableUsers.find((u: any) => {
+        const uId = (u.id || '').toString().toLowerCase();
+        const uUserId = (u.userId || '').toString().toLowerCase();
+        const uEmail = (u.email || '').toString().toLowerCase();
+        const uLoginEmail = (u.loginEmail || '').toString().toLowerCase();
+        return uUserId === input || uEmail === input || uLoginEmail === input || uId === input;
+      });
+
+      if (!foundUser && (input === 'admin' || input === 'mdhassanahamed15@gmail.com')) {
+        foundUser = {
+          id: 'Admin',
+          name: 'Admin',
+          email: 'mdhassanahamed15@gmail.com',
+          role: 'ADMIN',
+          status: 'ENABLED',
+          password: 'Admin',
+          avatar: 'https://picsum.photos/seed/admin/200',
+          isFirstLogin: true
+        };
+      }
+
+      if (!foundUser) {
+        setIsLoading(false);
+        showFeedback('User account not found', 'error');
+        return;
+      }
+
+      if (foundUser.role !== 'ADMIN' && foundUser.expiryDate) {
+        if (isExpired(foundUser.expiryDate)) {
+          setIsLoading(false);
+          const expiryErrorMsg = isBn 
+            ? 'আপনার অ্যাকাউন্টটি এক্সপায়ার হয়েছে। অনুগ্রহ করে এডমিনের সাথে যোগাযোগ করে আপনার একাউন্ট রিনিউ করে পুনরায় চেষ্টা করুন।' 
+            : 'Your account has expired. Please contact the admin to renew your account.';
+          showFeedback(expiryErrorMsg, 'error');
+          return;
+        }
+      }
+
+      if (foundUser.status === 'BLOCKED' || foundUser.status === 'DISABLED') {
+        setIsLoading(false);
+        const errorMsg = isBn 
+            ? 'আপনার অ্যাকাউন্টটি ব্লক অথবা ডিজেবল করা হয়েছে। অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন।' 
+            : 'Your account has been blocked or disabled. Please contact the admin.';
+        showFeedback(errorMsg, 'error');
+        return;
+      }
+
+      setLoginTime(new Date());
+      setUser(foundUser);
+      showFeedback(isBn ? 'সফলভাবে লগইন করা হয়েছে!' : 'Successfully logged in!');
+      setView('DASHBOARD');
+      setIsLoading(false);
+    } catch (err: any) {
+      console.error(err);
+      setIsLoading(false);
+      showFeedback('Login error: ' + (err.message || String(err)), 'error');
+    }
+  };
 
   const handleLogin = async () => {
     if (!username.trim()) {
@@ -1665,7 +1919,7 @@ const Login: React.FC = () => {
               className={`w-full transition-all ease-in-out login-card-container ${
                 activeTab === 'signup'
                   ? 'min-h-screen border-0 rounded-none px-2 sm:px-4 pt-0 pb-12 flex flex-col md:min-h-0 md:rounded-2xl md:border md:border-white/10 md:shadow-2xl md:my-auto md:p-8 md:max-w-lh md:mx-auto'
-                  : `border-t ${loginCardIsDark ? 'border-white/10 shadow-[0_-15px_50px_rgba(0,0,0,0.6)]' : 'border-black/10 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]'} rounded-t-[24px] rounded-b-none border-x-0 border-b-0 p-6 sm:p-8 pb-[max(1.5rem,env(safe-area-inset-bottom))] mt-auto min-h-[400px] md:border-t-0 md:rounded-2xl md:border md:shadow-2xl md:my-auto md:min-h-0 md:max-w-md md:mx-auto`
+                  : `border-t ${loginCardIsDark ? 'border-white/10 shadow-[0_-15px_50px_rgba(0,0,0,0.6)]' : 'border-black/10 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]'} rounded-t-[24px] rounded-b-none border-x-0 border-b-0 p-6 sm:p-8 pb-[max(1.5rem,env(safe-area-inset-bottom))] mt-auto min-h-[510px] md:border-t-0 md:rounded-2xl md:border md:shadow-2xl md:my-auto md:min-h-[510px] md:max-w-md md:mx-auto`
               }`}
             >
               {/* iOS Bottom Sheet Drag Handle */}
@@ -2022,6 +2276,28 @@ const Login: React.FC = () => {
                     </span>
                   </button>
                 </div>
+
+                {/* Fingerprint Login Trigger Icon */}
+                <div className="flex flex-col items-center justify-center pt-10 pb-4">
+                  <div className="flex items-center gap-2 w-full mb-4">
+                    <div className="h-[1px] bg-gray-200 dark:bg-white/10 flex-1" />
+                    <span className="text-[10px] font-black tracking-widest uppercase text-text-muted">
+                      {language === 'bn' ? 'অথবা ফিঙ্গারপ্রিন্ট' : 'OR BIOMETRICS'}
+                    </span>
+                    <div className="h-[1px] bg-gray-200 dark:bg-white/10 flex-1" />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleFingerprintIconClick}
+                    className="w-14 h-14 rounded-full flex items-center justify-center transition-all bg-zinc-50 dark:bg-white/5 text-blue-600 hover:text-blue-500 border border-gray-200/50 dark:border-white/10 shadow-sm active:scale-95 hover:scale-105 group"
+                    title={language === 'bn' ? 'ফিঙ্গারপ্রিন্ট লগইন' : 'Biometric Login'}
+                  >
+                    <Fingerprint size={28} className="group-hover:animate-pulse" />
+                  </button>
+                  <p className="text-[9px] font-bold text-text-muted uppercase mt-2 tracking-wider">
+                    {language === 'bn' ? 'ফিঙ্গারপ্রিন্ট দিয়ে প্রবেশ করুন' : 'Tap to Login'}
+                  </p>
+                </div>
               </form>
             </>
             ) : (
@@ -2140,6 +2416,104 @@ const Login: React.FC = () => {
       </>
       , document.body
     )}
+
+      {/* Biometric First Time Credentials Activation Modal & Biometric Auth Prompt overlay inside portals */}
+      {createPortal(
+        <>
+          {isSetupModalOpen && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in" id="biometric-setup-credentials-modal">
+              <div className="w-full max-w-sm bg-white dark:bg-[#1a1a24] rounded-2xl shadow-2xl border border-gray-100 dark:border-white/5 overflow-hidden">
+                {/* Header */}
+                <div className="px-6 py-4 border-b border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 flex items-center justify-between">
+                  <h3 className="font-black text-sm uppercase tracking-wider text-text-main flex items-center gap-2">
+                    <Fingerprint size={18} className="text-blue-500" />
+                    {language === 'bn' ? 'ফিঙ্গারপ্রিন্ট অ্যাক্টিভেশন' : 'Biometric Setup'}
+                  </h3>
+                  <button 
+                    onClick={() => setIsSetupModalOpen(false)}
+                    className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-text-muted transition-colors"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                {/* Form */}
+                <div className="p-6 space-y-4 text-left">
+                  <p className="text-xs text-text-muted font-bold leading-relaxed">
+                    {language === 'bn' 
+                      ? 'প্রথমবার ফিঙ্গারপ্রিন্ট যুক্ত করতে অনুগ্রহ করে আপনার ইউজার আইডি এবং পাসওয়ার্ড দিয়ে অ্যাকাউন্টটি ভেরিফাই করুন।' 
+                      : 'To enable fingerprint login for the first time, please verify your account with your User ID and Password.'}
+                  </p>
+
+                  {setupError && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-xs font-bold">
+                      {setupError}
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    <InputField
+                      name="setupUsername"
+                      label={language === 'bn' ? 'ইউজার আইডি বা ইমেইল' : 'User ID / Email'}
+                      value={setupUsername}
+                      onChange={(e) => setSetupUsername(e.target.value)}
+                      icon={<UserIcon size={16} />}
+                      placeholder={language === 'bn' ? 'ইউজার আইডি দিন' : 'Enter your User ID'}
+                    />
+
+                    <InputField
+                      name="setupPassword"
+                      label={language === 'bn' ? 'পাসওয়ার্ড' : 'Password'}
+                      type="password"
+                      value={setupPassword}
+                      onChange={(e) => setSetupPassword(e.target.value)}
+                      icon={<Lock size={16} />}
+                      placeholder="••••••••"
+                    />
+                  </div>
+
+                  <div className="pt-2 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsSetupModalOpen(false)}
+                      className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-xl font-bold text-xs uppercase text-text-main transition-colors"
+                    >
+                      {language === 'bn' ? 'বাতিল' : 'Cancel'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleVerifyAndSetupBio}
+                      disabled={setupLoading}
+                      className="flex-1 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs uppercase transition-colors flex items-center justify-center gap-2"
+                      style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1d4ed8 100%)' }}
+                    >
+                      {setupLoading ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        <Check size={14} />
+                      )}
+                      {language === 'bn' ? 'ভেরিফাই করুন' : 'Verify'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Biometric Auth Prompt overlay */}
+          <BiometricPrompt
+            isOpen={isBioPromptOpen}
+            mode="fingerprint"
+            action={localStorage.getItem('fleetpro_biometric_login_enabled') === 'true' ? 'authenticate' : 'enroll'}
+            language={language}
+            onClose={() => setIsBioPromptOpen(false)}
+            onSuccess={handleBioLoginSuccess}
+            username={localStorage.getItem('fleetpro_biometric_username') || setupUsername || 'biometric_user'}
+            userId={localStorage.getItem('fleetpro_biometric_username') || setupUsername || 'biometric_user'}
+          />
+        </>
+        , document.body
+      )}
     </>
   );
 };
