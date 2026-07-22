@@ -148,12 +148,12 @@ root.render(
         --input-border-color: rgba(0, 0, 0, 0.45);
         --input-bg-solid: var(--card-bg-solid, var(--page-bg-solid, #ffffff));
         --global-divider: rgba(0, 0, 0, 0.2);
-        --global-pt: 0.75rem; /* 12px */
-        --global-pt-sm: 1rem; /* 16px */
-        --global-pt-lg: 1.25rem; /* 20px */
-        --global-px: 0.75rem; /* 12px */
-        --global-px-sm: 1rem; /* 16px */
-        --global-px-lg: 1.25rem; /* 20px */
+        --global-pt: 1rem; /* 16px */
+        --global-pt-sm: 1.25rem; /* 20px */
+        --global-pt-lg: 1.5rem; /* 24px */
+        --global-px: 1rem; /* 16px */
+        --global-px-sm: 1.25rem; /* 20px */
+        --global-px-lg: 1.5rem; /* 24px */
       }
 
       .dark, .dark-mode, .dark-theme {
