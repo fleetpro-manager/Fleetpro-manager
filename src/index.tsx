@@ -1845,6 +1845,12 @@ root.render(
         border-radius: 10px !important;
       }
 
+      /* Monthly File Section Styles */
+      .monthly-file-details-container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
      `}</style>
   </React.StrictMode>
 );

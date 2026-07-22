@@ -2404,7 +2404,7 @@ const MonthlyFileDetails: React.FC = () => {
   );
 
   return (
-    <div className="animate-fade-in pb-28 space-y-4 w-full px-1 sm:px-2">
+    <div className="animate-fade-in pb-28 space-y-4 w-full px-1 sm:px-2 monthly-file-details-container">
        
         {showPendingBreakdownPage && (
           <PendingBreakdownPage 
