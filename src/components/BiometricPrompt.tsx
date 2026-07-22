@@ -153,7 +153,17 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
       console.warn("Native biometric prompt cancelled or failed:", err);
       setStatus('idle');
       setProgress(0);
-      if (err.name !== 'NotAllowedError' && err.name !== 'AbortError') {
+      const errMsg = String(err.message || err);
+      const isIframeRestriction = err.name === 'SecurityError' || 
+                                  errMsg.includes('publickey-credentials') || 
+                                  errMsg.includes('Permissions Policy') || 
+                                  errMsg.includes('not enabled');
+
+      if (isIframeRestriction) {
+        setNativeError(isBn 
+          ? 'ব্রাউজার সিকিউরিটি পলিসির কারণে আইফ্রেম (প্রিভিউ উইন্ডো) থেকে সরাসরি আপনার মোবাইলের ফিঙ্গারপ্রিন্ট সেন্সর চালু করা সম্ভব নয়। এটি পরীক্ষা করার জন্য স্ক্রিনের ওপরে ডানদিকের "Open in a new tab" বাটনে ক্লিক করে নতুন ট্যাবে অ্যাপটি খুলুন। অথবা এখনই পরীক্ষা করতে ওপরের ফিঙ্গারপ্রিন্ট চিহ্নে ৩ সেকেন্ড চেপে ধরে রাখুন (সিমুলেশন)।' 
+          : 'Due to browser security policies inside the preview iframe, the native biometric prompt is blocked. To test real device biometrics, please open the app in a new tab (using the "Open in a new tab" button at the top-right). You can also press and hold the fingerprint icon above for 3 seconds to simulate it right here!');
+      } else if (err.name !== 'NotAllowedError' && err.name !== 'AbortError') {
         setNativeError(err.message || String(err));
       } else if (force) {
         setNativeError(isBn 
@@ -320,8 +330,17 @@ export const BiometricPrompt: React.FC<BiometricPromptProps> = ({
 
           {/* Error display */}
           {nativeError && (
-            <div className="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl text-xs font-bold leading-relaxed w-full">
-              {nativeError}
+            <div className="p-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl text-xs font-bold leading-relaxed w-full flex flex-col items-center gap-3">
+              <p className="text-center">{nativeError}</p>
+              {(nativeError.includes('আইফ্রেম') || nativeError.includes('iframe')) && (
+                <button
+                  type="button"
+                  onClick={() => window.open(window.location.href, '_blank')}
+                  className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-[11px] font-black uppercase tracking-wide transition-all shadow-sm active:scale-95"
+                >
+                  {isBn ? 'নতুন ট্যাবে অ্যাপ খুলুন' : 'Open in New Tab'}
+                </button>
+              )}
             </div>
           )}
 
