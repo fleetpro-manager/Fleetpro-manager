@@ -456,7 +456,7 @@ const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpape
               
               
               
-              className="flex-1 overflow-y-auto pt-6 px-4 space-y-4 pb-[calc(160px+env(safe-area-inset-bottom))]"
+              className="flex-1 overflow-y-auto pt-4 sm:pt-6 lg:pt-8 px-4 space-y-4 pb-[calc(160px+env(safe-area-inset-bottom))]"
             >
               {/* Pending Balance Top Summary Card */}
               <div className="relative overflow-hidden rounded-[10px] p-6 text-white shadow-xl bg-gradient-to-br from-orange-500 via-orange-600 to-amber-700 border border-white/10">
@@ -604,7 +604,7 @@ const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpape
               
               
               
-              className="flex-1 overflow-y-auto pt-6 px-4 space-y-4 pb-6"
+              className="flex-1 overflow-y-auto pt-4 sm:pt-6 lg:pt-8 px-4 space-y-4 pb-6"
             >
               {/* Compute displayItems early */}
               {(() => {
@@ -1501,7 +1501,7 @@ const SwipeTransactionCard = ({ payment, onClick, currency, isIncome, onDelete, 
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 pt-6 space-y-4 pb-[calc(180px+env(safe-area-inset-bottom))]">
+        <div className="flex-1 overflow-y-auto px-4 pt-4 sm:pt-6 lg:pt-8 space-y-4 pb-[calc(180px+env(safe-area-inset-bottom))]">
           {/* Top Card and Filters */}
           {(() => {
             const totalAmountNum = categoryPayments.reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
@@ -2218,7 +2218,7 @@ const SwipeTransactionCard = ({ payment, onClick, currency, isIncome, onDelete, 
         
         
         
-        className="flex-1 flex flex-col items-center justify-start px-4 pt-6 min-h-[calc(100dvh-220px)]"
+        className="flex-1 flex flex-col items-center justify-start px-4 pt-4 sm:pt-6 lg:pt-8 min-h-[calc(100dvh-220px)]"
       >
         <div className="w-full max-w-md mx-auto">
           <div className="bg-white dark:bg-[#111111] rounded-3xl p-6 shadow-2xl border border-black/5 dark:border-white/5 relative overflow-hidden">
@@ -2576,7 +2576,7 @@ const SwipeTransactionCard = ({ payment, onClick, currency, isIncome, onDelete, 
 
   return (
     <div 
-      className="-mt-6 flex flex-col h-[calc(100dvh-140px)] md:h-[calc(100dvh-100px)] w-full mx-auto"
+      className="flex flex-col h-[calc(100dvh-140px)] md:h-[calc(100dvh-100px)] w-full mx-auto"
     >
       {/* Header with Filters & Unified Balance Display */}
       <div className="z-20 pt-4 pb-4 px-1 shrink-0">

@@ -381,7 +381,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div 
-      className="-mt-6 flex flex-col h-auto md:h-[calc(100dvh-100px)] md:grid md:grid-cols-12 md:gap-6 md:overflow-hidden"
+      className="flex flex-col h-auto md:h-[calc(100dvh-100px)] md:grid md:grid-cols-12 md:gap-6 md:overflow-hidden"
     >
       {/* Income / Purchase Summary Card Container */}
       <div className="z-20 pt-4 pb-4 px-1 shrink-0 md:col-span-5 lg:col-span-4 flex flex-col justify-start md:h-full md:overflow-y-auto scrollbar-hide md:pt-4">

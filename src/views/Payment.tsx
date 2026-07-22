@@ -2003,7 +2003,7 @@ const PaymentView: React.FC = () => {
 
   return (
     <div 
-      className={`-mt-6 flex flex-col h-[calc(100dvh-140px)] md:h-[calc(100dvh-100px)] w-full mx-auto ${isEntryFormOpen ? 'hidden' : 'opacity-100'}`}
+      className={`flex flex-col h-[calc(100dvh-140px)] md:h-[calc(100dvh-100px)] w-full mx-auto ${isEntryFormOpen ? 'hidden' : 'opacity-100'}`}
     >
       {/* Detailed Pending Category Breakdown Page */}
       {createPortal(
@@ -2045,7 +2045,7 @@ const PaymentView: React.FC = () => {
 
               {/* Content */}
               <div 
-                className="flex-1 overflow-y-auto pt-6 px-4 space-y-4 pb-32"
+                className="flex-1 overflow-y-auto pt-4 sm:pt-6 lg:pt-8 px-4 space-y-4 pb-32"
               >
                 {(() => {
                   const filteredSalaryMonths = salaryAndCommissionMonths.filter(val => {
@@ -2734,7 +2734,7 @@ const PaymentView: React.FC = () => {
 
               {/* Content */}
               <div 
-                className="flex-1 overflow-y-auto pt-6 px-4 space-y-4 pb-32"
+                className="flex-1 overflow-y-auto pt-4 sm:pt-6 lg:pt-8 px-4 space-y-4 pb-32"
                 
                 
                 
@@ -3782,7 +3782,7 @@ const PaymentView: React.FC = () => {
                   return (
                     <>
                       <div 
-                        className="flex-1 overflow-y-auto pt-6 px-4 space-y-4 pb-12"
+                        className="flex-1 overflow-y-auto pt-4 sm:pt-6 lg:pt-8 px-4 space-y-4 pb-12"
                         
                         
                         
@@ -4013,7 +4013,7 @@ const PaymentView: React.FC = () => {
                   return (
                     <>
                       <div 
-                        className="flex-1 overflow-y-auto pt-6 px-4 space-y-4 pb-12"
+                        className="flex-1 overflow-y-auto pt-4 sm:pt-6 lg:pt-8 px-4 space-y-4 pb-12"
                         
                         
                         

@@ -148,6 +148,9 @@ root.render(
         --input-border-color: rgba(0, 0, 0, 0.45);
         --input-bg-solid: var(--card-bg-solid, var(--page-bg-solid, #ffffff));
         --global-divider: rgba(0, 0, 0, 0.2);
+        --global-pt: 1.25rem; /* Default pt-5 */
+        --global-pt-sm: 1.5rem; /* Default pt-6 */
+        --global-pt-lg: 2rem; /* Default pt-8 */
       }
 
       .dark, .dark-mode, .dark-theme {
@@ -164,6 +167,22 @@ root.render(
 
       .eye-comfort {
         filter: sepia(0.35) brightness(0.9) contrast(1.05);
+      }
+
+      .pt-global {
+        padding-top: var(--global-pt) !important;
+      }
+
+      @media (min-width: 640px) {
+        .pt-global {
+          padding-top: var(--global-pt-sm) !important;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .pt-global {
+          padding-top: var(--global-pt-lg) !important;
+        }
       }
 
       /* Hide robustly all scrollbars */

@@ -414,7 +414,7 @@ export default function FuelView() {
   };
 
   return (
-    <div className="relative pb-6 -mt-3">
+    <div className="relative pb-6">
       
       {/* Page Watermark Background */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none opacity-[0.015] dark:opacity-[0.01]">

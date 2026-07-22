@@ -859,7 +859,7 @@ const ViewContainer: React.FC = () => {
             >
               <div 
                 ref={scrollContainerRef}
-                className={`w-full h-full ${shouldBeFullWidth ? 'flex flex-col' : `overflow-y-auto px-4 sm:px-6 lg:px-8 pt-6 ${isBottomNavHidden ? 'pb-[calc(1.2rem+env(safe-area-inset-bottom))]' : 'pb-[calc(76px+env(safe-area-inset-bottom)+16px)]'}`}`}
+                className={`w-full h-full ${shouldBeFullWidth ? 'flex flex-col' : `overflow-y-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8 ${isBottomNavHidden ? 'pb-[calc(1.2rem+env(safe-area-inset-bottom))]' : 'pb-[calc(76px+env(safe-area-inset-bottom)+16px)]'}`}`}
               >
                 {renderView()}
               </div>

@@ -7,7 +7,11 @@ import InputField from '../components/InputField';
 import { subscribeFirebaseCollection } from '../services/firebase';
 
 const UserFilesList: React.FC = () => {
-  const { language, setView, setSelectedUser, removeUser, confirmAction, showFeedback } = useStore();
+  const { 
+    language, setView, setSelectedUser, removeUser, confirmAction, showFeedback,
+    primaryColor: storePrimaryColor, currentThemeObj 
+  } = useStore();
+  const primaryColor = storePrimaryColor || currentThemeObj?.primary || '#3b82f6';
   const t = TRANSLATIONS[language];
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<'ADMIN' | 'USER' | null>('USER');
@@ -128,21 +132,20 @@ const UserFilesList: React.FC = () => {
     <div className="pb-[60px] space-y-4">
       {/* Role Selector Tabs */}
       <div 
-        
-        
-        
         className="bg-white dark:bg-theme-card p-1 rounded-[8px] shadow-sm h-14 relative flex items-center"
       >
         <div
-           className="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-[6px] bg-blue-600 shadow-lg shadow-blue-500/30 z-0"
-           
-           
-           
+          className="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-[6px] shadow-lg transition-transform duration-300 ease-out z-0"
+          style={{
+            transform: roleFilter === 'USER' ? 'translateX(100%)' : 'translateX(0)',
+            backgroundColor: primaryColor,
+            boxShadow: `0 10px 15px -3px ${primaryColor}4d, 0 4px 6px -4px ${primaryColor}4d`
+          }}
         />
         <div className="flex w-full h-full relative z-10 gap-1">
           <button
             onClick={() => setRoleFilter('ADMIN')}
-            className={`flex-1 rounded-[6px] font-black text-[10px] uppercase tracking-widest transition-colors  flex items-center justify-center h-full ${
+            className={`flex-1 rounded-[6px] font-black text-[10px] uppercase tracking-widest transition-colors duration-300 flex items-center justify-center h-full ${
               roleFilter === 'ADMIN'
                 ? 'text-white font-extrabold'
                 : 'text-text-main hover:bg-black/5 dark:hover:bg-white/5'
@@ -185,7 +188,7 @@ const UserFilesList: React.FC = () => {
             <span className="text-[10px] font-black text-text-muted uppercase tracking-widest">
               {roleFilter === 'ADMIN' ? t.ADMIN_LABEL : t.USER_LABEL} Accounts
             </span>
-            <span className="text-[10px] font-black bg-blue-600 text-white px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-black text-white px-2 py-0.5 rounded-full" style={{ backgroundColor: primaryColor }}>
               {filteredUsers.length}
             </span>
           </div>
@@ -195,18 +198,15 @@ const UserFilesList: React.FC = () => {
       {/* Users List with Loading Indicator */}
       {isLoading ? (
         <div className="flex justify-center items-center py-20 col-span-full">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-t-transparent" style={{ borderLeftColor: primaryColor, borderBottomColor: primaryColor, borderRightColor: primaryColor }}></div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {roleFilter === null ? (
             <div 
-              
-              
-              
               className="text-center py-12 col-span-full"
             >
-              <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-500">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${primaryColor}1a`, color: primaryColor }}>
                 <Shield size={32} />
               </div>
               <h3 className="text-lg font-bold text-text-main mb-1">{t.SELECT_ACCOUNT_TYPE}</h3>

@@ -238,7 +238,7 @@ const UserRenew: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-theme-bg px-0 py-4 relative">
+    <div className="flex flex-col h-full bg-theme-bg px-0 pt-0 pb-4 relative">
       {selectedTransactionForDetails && createPortal(
         <>
           <div className="fixed inset-0 z-[5000] flex flex-col items-center justify-center p-4">
@@ -348,9 +348,9 @@ const UserRenew: React.FC = () => {
 
       {activeTab === 'DASHBOARD' && (
         <div className="flex-1 flex flex-col gap-6">
-          <div className="border border-blue-900 px-4 py-8 rounded-3xl bg-[#001f5f]">
+          <div className="border border-blue-900 px-4 pt-4 pb-8 rounded-[10px] bg-[#001f5f]">
             <div className="flex gap-6">
-              <div className="flex-1 bg-[#001f5f] p-5 rounded-3xl shadow-xl cursor-pointer text-white flex flex-col justify-between border border-blue-500 relative overflow-hidden" onClick={() => setActiveTab('PENDING_LIST')}>
+              <div className="flex-1 bg-[#001f5f] p-5 rounded-[10px] shadow-xl cursor-pointer text-white flex flex-col justify-between border border-blue-500 relative overflow-hidden" onClick={() => setActiveTab('PENDING_LIST')}>
                   {/* Visual arc */}
                   <div className="absolute -left-16 -top-16 w-48 h-48 rounded-full border-4 border-white/10" />                
                   <div className="w-12 h-9 bg-slate-300 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
@@ -364,7 +364,7 @@ const UserRenew: React.FC = () => {
                       </p>
                   </div>
               </div>
-              <div className="flex-1 bg-[#001f5f] p-5 rounded-3xl shadow-xl cursor-pointer text-white flex flex-col justify-between border border-blue-500 relative overflow-hidden" onClick={() => setActiveTab('HISTORY')}>
+              <div className="flex-1 bg-[#001f5f] p-5 rounded-[10px] shadow-xl cursor-pointer text-white flex flex-col justify-between border border-blue-500 relative overflow-hidden" onClick={() => setActiveTab('HISTORY')}>
                   {/* Visual arc */}
                   <div className="absolute -left-16 -top-16 w-48 h-48 rounded-full border-4 border-white/10" />                
                   <div className="w-12 h-9 bg-slate-300 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
