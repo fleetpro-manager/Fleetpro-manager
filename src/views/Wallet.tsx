@@ -1138,7 +1138,7 @@ const Wallet: React.FC = () => {
       {!activeSection ? (
         <div 
           key="main-wallet"
-          className="absolute inset-0 w-full h-full overflow-y-auto px-4 sm:px-6 lg:px-8 pt-global pb-[calc(76px+env(safe-area-inset-bottom)+80px)] space-y-4"
+          className="absolute inset-0 w-full h-full overflow-y-auto px-global pt-global pb-[calc(76px+env(safe-area-inset-bottom)+80px)] space-y-4"
         >
 
             {/* ADMIN USER SELECTOR DROPDOWN */}
@@ -1227,7 +1227,7 @@ const Wallet: React.FC = () => {
             className="absolute inset-0 w-full h-full z-50 flex flex-col"
             style={{ background: (isNightMode || appThemeMode === 'dark' || isDarkMode) ? '#000000' : (wallpaper ? `url(${wallpaper}) center/cover no-repeat fixed` : (backgroundColor || 'var(--app-bg)')) }}
           >
-            <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pt-global pb-28">
+            <div className="flex-1 overflow-y-auto px-global pt-global pb-28">
               <div className="tx-list">
                 {/* As specified, displays credited transactions history */}
                 {renderList(filteredApprovedList.filter(t => t.type === 'INCOME'))}
@@ -1246,7 +1246,7 @@ const Wallet: React.FC = () => {
             className="absolute inset-0 w-full h-full z-50 flex flex-col"
             style={{ background: (isNightMode || appThemeMode === 'dark' || isDarkMode) ? '#000000' : (wallpaper ? `url(${wallpaper}) center/cover no-repeat fixed` : (backgroundColor || 'var(--app-bg)')) }}
           >
-            <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pt-global pb-28">
+            <div className="flex-1 overflow-y-auto px-global pt-global pb-28">
               {/* Modern Grid of side-by-side Balance Summary Cards */}
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <button 
@@ -1336,7 +1336,7 @@ const Wallet: React.FC = () => {
             className="absolute inset-0 w-full h-full z-50 flex flex-col"
             style={{ background: (isNightMode || appThemeMode === 'dark' || isDarkMode) ? '#000000' : (wallpaper ? `url(${wallpaper}) center/cover no-repeat fixed` : (backgroundColor || 'var(--app-bg)')) }}
           >
-            <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pt-global pb-[calc(76px+env(safe-area-inset-bottom)+40px)] space-y-6">
+            <div className="flex-1 overflow-y-auto px-global pt-global pb-[calc(76px+env(safe-area-inset-bottom)+40px)] space-y-6">
               
               {/* Toggle Card */}
               <div className={`relative p-1 flex w-full rounded-2xl overflow-hidden border-2 transition-all duration-300 ${

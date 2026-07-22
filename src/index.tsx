@@ -148,9 +148,12 @@ root.render(
         --input-border-color: rgba(0, 0, 0, 0.45);
         --input-bg-solid: var(--card-bg-solid, var(--page-bg-solid, #ffffff));
         --global-divider: rgba(0, 0, 0, 0.2);
-        --global-pt: 1rem; /* Default pt-4 */
-        --global-pt-sm: 1.5rem; /* Default pt-6 */
-        --global-pt-lg: 2rem; /* Default pt-8 */
+        --global-pt: 0.75rem; /* 12px */
+        --global-pt-sm: 1rem; /* 16px */
+        --global-pt-lg: 1.25rem; /* 20px */
+        --global-px: 0.75rem; /* 12px */
+        --global-px-sm: 1rem; /* 16px */
+        --global-px-lg: 1.25rem; /* 20px */
       }
 
       .dark, .dark-mode, .dark-theme {
@@ -173,15 +176,28 @@ root.render(
         padding-top: var(--global-pt) !important;
       }
 
+      .px-global {
+        padding-left: var(--global-px) !important;
+        padding-right: var(--global-px) !important;
+      }
+
       @media (min-width: 640px) {
         .pt-global {
           padding-top: var(--global-pt-sm) !important;
+        }
+        .px-global {
+          padding-left: var(--global-px-sm) !important;
+          padding-right: var(--global-px-sm) !important;
         }
       }
 
       @media (min-width: 1024px) {
         .pt-global {
           padding-top: var(--global-pt-lg) !important;
+        }
+        .px-global {
+          padding-left: var(--global-px-lg) !important;
+          padding-right: var(--global-px-lg) !important;
         }
       }
 

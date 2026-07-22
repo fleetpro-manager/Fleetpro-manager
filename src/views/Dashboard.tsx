@@ -381,10 +381,10 @@ const Dashboard: React.FC = () => {
 
   return (
     <div 
-      className="flex flex-col h-auto md:h-[calc(100dvh-100px)] md:grid md:grid-cols-12 md:gap-6 md:overflow-hidden"
+      className="flex flex-col h-auto md:h-[calc(100dvh-100px)] md:grid md:grid-cols-12 md:gap-4 md:overflow-hidden"
     >
       {/* Income / Purchase Summary Card Container */}
-      <div className="z-20 pb-4 px-1 shrink-0 md:col-span-5 lg:col-span-4 flex flex-col justify-start md:h-full md:overflow-y-auto scrollbar-hide">
+      <div className="z-20 pb-4  shrink-0 md:col-span-5 lg:col-span-4 flex flex-col justify-start md:h-full md:overflow-y-auto scrollbar-hide">
         {user?.accountType !== "Personal Account" ? (
           <div 
             className="relative overflow-hidden rounded-xl p-5 min-h-[175px] md:min-h-[290px] lg:min-h-[240px] flex flex-col justify-between text-white shadow-2xl bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#0f172a] border border-white/10"
@@ -552,7 +552,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="flex-1 overflow-visible md:overflow-y-auto scrollbar-hide pb-6 md:pb-6 md:col-span-7 lg:col-span-8">
-        <div className={`px-1 pb-4 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6`}>
+        <div className={` pb-4 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6`}>
           {sortedItems.map(item => {
             const iconColor = getContrastColor(item.color);
             return (

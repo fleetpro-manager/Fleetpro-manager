@@ -1975,7 +1975,7 @@ const PaymentView: React.FC = () => {
             />
             <label 
               htmlFor="formNote"
-              className="absolute font-extrabold tracking-wider transition-all duration-200 pointer-events-none z-20 rounded-lg text-gray-500 peer-focus:text-[var(--primary)] text-[12px] left-3 top-4 px-1 peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-[10px] peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-[10px]"
+              className="absolute font-extrabold tracking-wider transition-all duration-200 pointer-events-none z-20 rounded-lg text-gray-500 peer-focus:text-[var(--primary)] text-[12px] left-3 top-4  peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-[10px] peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-[10px]"
               style={{ backgroundColor: 'var(--card-bg, #ffffff)' }}
             >
               Note / Description
@@ -2045,7 +2045,7 @@ const PaymentView: React.FC = () => {
 
               {/* Content */}
               <div 
-                className="flex-1 overflow-y-auto pt-global px-4 space-y-4 pb-32"
+                className="flex-1 overflow-y-auto pt-global px-global space-y-4 pb-32"
               >
                 {(() => {
                   const filteredSalaryMonths = salaryAndCommissionMonths.filter(val => {
@@ -2353,7 +2353,7 @@ const PaymentView: React.FC = () => {
                                     {/* Circular gradient trips badge */}
                                     <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-blue-500 via-teal-400 to-teal-500 p-[2px] flex items-center justify-center shrink-0 shadow-[0_4px_10px_rgba(20,184,166,0.1)]">
                                       <div className="w-full h-full rounded-full bg-white dark:bg-zinc-800 flex items-center justify-center">
-                                        <span className="text-[10px] font-black text-slate-800 dark:text-zinc-100 text-center leading-none px-1">
+                                        <span className="text-[10px] font-black text-slate-800 dark:text-zinc-100 text-center leading-none ">
                                           {val.totalTrips} {language === 'bn' ? 'টি' : 'Trips'}
                                         </span>
                                       </div>
@@ -2734,7 +2734,7 @@ const PaymentView: React.FC = () => {
 
               {/* Content */}
               <div 
-                className="flex-1 overflow-y-auto pt-global px-4 space-y-4 pb-32"
+                className="flex-1 overflow-y-auto pt-global px-global space-y-4 pb-32"
                 
                 
                 
@@ -3189,7 +3189,7 @@ const PaymentView: React.FC = () => {
                                     : "text-[10px] font-semibold text-[#002D4A] flex items-center flex-wrap gap-1"
                                   }>
                                     <span>{language === 'bn' ? 'গাড়ী নম্বর' : 'Vehicle'}: <strong className="font-black font-mono text-[10px]">{item.vehicleNumber || 'N/A'}</strong></span>
-                                    <span className="opacity-50 px-1 text-[10px]">|</span>
+                                    <span className="opacity-50  text-[10px]">|</span>
                                     <span>{language === 'bn' ? 'টাইপ' : 'Type'}: <strong className="font-black text-[10px]">{item.deliveryPlace || item.vehicleType || (language === 'bn' ? 'ট্রেইলার' : 'Trailer')}</strong></span>
                                   </div>
 
@@ -3782,7 +3782,7 @@ const PaymentView: React.FC = () => {
                   return (
                     <>
                       <div 
-                        className="flex-1 overflow-y-auto pt-global px-4 space-y-4 pb-12"
+                        className="flex-1 overflow-y-auto pt-global px-global space-y-4 pb-12"
                         
                         
                         
@@ -4013,7 +4013,7 @@ const PaymentView: React.FC = () => {
                   return (
                     <>
                       <div 
-                        className="flex-1 overflow-y-auto pt-global px-4 space-y-4 pb-12"
+                        className="flex-1 overflow-y-auto pt-global px-global space-y-4 pb-12"
                         
                         
                         
@@ -4156,7 +4156,7 @@ const PaymentView: React.FC = () => {
       {/* Global Delete Button Removed as per request */}
 
 
-      <div className="z-20 pb-4 px-1 shrink-0">
+      <div className="z-20 pb-4  shrink-0">
         {/* Summary Card */}
         <div 
           className="relative overflow-hidden rounded-xl p-5 min-h-[190px] md:min-h-[220px] flex flex-col justify-between text-white shadow-2xl bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#0f172a] border border-white/10"
@@ -4400,7 +4400,7 @@ const PaymentView: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <p className="text-xs font-black text-text-main uppercase">{p.category}</p>
                         {p.type === 'INCOME' && (
-                          <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-2xl uppercase tracking-wider ${p.status === 'RECEIVED' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'}`}>
+                          <span className={`text-[8px] font-bold .5 py-0.5 rounded-2xl uppercase tracking-wider ${p.status === 'RECEIVED' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'}`}>
                             {p.status}
                           </span>
                         )}
@@ -4669,7 +4669,7 @@ const PaymentView: React.FC = () => {
                 />
                 <label
                   htmlFor="payment_advance_amount_input"
-                  className={`absolute transition-all duration-200 pointer-events-none origin-[0] uppercase tracking-wider whitespace-nowrap px-1.5 ${
+                  className={`absolute transition-all duration-200 pointer-events-none origin-[0] uppercase tracking-wider whitespace-nowrap .5 ${
                     isAmountFocused || advanceAmount
                       ? `top-0 -translate-y-1/2 left-4 text-[10px] font-bold ${isDarkMode ? 'bg-theme-card text-emerald-400' : 'bg-white text-emerald-600'}`
                       : `top-1/2 -translate-y-1/2 left-4 text-xs font-bold ${isDarkMode ? 'text-white/30' : 'text-neutral-400'}`
@@ -6038,7 +6038,7 @@ const PaymentView: React.FC = () => {
                                   {language === 'bn' ? 'কন্টেইনার:' : 'Cont:'} {t.containerNumber}
                                 </span>
                                 {t.subKeys.length > 0 && (
-                                  <span className="text-[9px] text-text-muted truncate whitespace-nowrap bg-gray-100 dark:bg-zinc-800 px-1 rounded">
+                                  <span className="text-[9px] text-text-muted truncate whitespace-nowrap bg-gray-100 dark:bg-zinc-800  rounded">
                                     ({t.subKeys.map(sk => `${sk.label}: ${sk.amount.toLocaleString()}`).join(' | ')})
                                   </span>
                                 )}

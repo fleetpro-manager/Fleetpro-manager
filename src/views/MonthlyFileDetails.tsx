@@ -470,7 +470,7 @@ const AvailableBalancePage = ({
       <div 
         className="flex-1 flex flex-col overflow-hidden"
       >
-        <div className="flex-1 overflow-y-auto pt-global px-4 sm:px-6 lg:px-8 space-y-4 pb-[180px] font-sans">
+        <div className="flex-1 overflow-y-auto pt-global px-global space-y-4 pb-[180px] font-sans">
           
           {/* Summary Card */}
           <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-[10px] p-5 text-white shadow-lg relative overflow-hidden">
@@ -577,7 +577,7 @@ const AvailableBalancePage = ({
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto pt-global px-4 sm:px-6 lg:px-8 space-y-4 pb-[140px] safe-bottom">
+            <div className="flex-1 overflow-y-auto pt-global px-global space-y-4 pb-[140px] safe-bottom">
               {/* 1. Category Summary Card */}
               {(() => {
                 const cardDetails = getCategoryCardDetails(selectedCategory);
@@ -1550,7 +1550,7 @@ const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpape
       <div 
         className="flex-1 flex flex-col overflow-hidden"
       >
-        <div className="flex-1 overflow-y-auto pt-global px-4 sm:px-6 lg:px-8 space-y-4 pb-[180px]">
+        <div className="flex-1 overflow-y-auto pt-global px-global space-y-4 pb-[180px]">
           
           {/* Summary Card */}
           <div className="bg-gradient-to-br from-orange-500 to-amber-600 rounded-[10px] p-5 text-white shadow-lg relative overflow-hidden">
@@ -1658,7 +1658,7 @@ const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpape
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto pt-global px-4 sm:px-6 lg:px-8 space-y-4 pb-[140px] safe-bottom">
+            <div className="flex-1 overflow-y-auto pt-global px-global space-y-4 pb-[140px] safe-bottom">
               {/* 1. Category Summary Card */}
               {(() => {
                 const cardDetails = getCategoryCardDetails(selectedCategory);
@@ -2966,7 +2966,7 @@ const MonthlyFileDetails: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pt-global space-y-6 pb-[140px] md:pb-6">
+            <div className="flex-1 overflow-y-auto px-global pt-global space-y-6 pb-[140px] md:pb-6">
               
               {/* Card 1: Dates & Times */}
               <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] dark:shadow-none border border-gray-100/80 dark:border-white/5 overflow-hidden flex flex-col relative w-full">

@@ -838,7 +838,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, hideHeader, hideBottom
           style={{ background: 'transparent' }}
         >
           <div 
-            className={fullWidth ? "w-full flex-1 flex flex-col min-h-0" : "w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-6 lg:pb-10"}
+            className={fullWidth ? "w-full flex-1 flex flex-col min-h-0" : "w-full max-w-7xl mx-auto px-global pt-6 pb-6 lg:pb-10"}
             style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
           >
             {children}
