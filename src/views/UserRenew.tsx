@@ -347,9 +347,9 @@ const UserRenew: React.FC = () => {
       )}
 
       {activeTab === 'DASHBOARD' && (
-        <div className="flex-1 flex flex-col gap-6">
-          <div className="border border-blue-900 px-4 pt-4 pb-8 rounded-[10px] bg-[#001f5f]">
-            <div className="flex gap-6">
+        <div className="flex-1 flex flex-col gap-4">
+          <div className="border border-blue-900 px-4 pt-4 pb-4 rounded-[10px] bg-[#001f5f]">
+            <div className="flex gap-4">
               <div className="flex-1 bg-[#001f5f] p-5 rounded-[10px] shadow-xl cursor-pointer text-white flex flex-col justify-between border border-blue-500 relative overflow-hidden" onClick={() => setActiveTab('PENDING_LIST')}>
                   {/* Visual arc */}
                   <div className="absolute -left-16 -top-16 w-48 h-48 rounded-full border-4 border-white/10" />                
@@ -378,10 +378,10 @@ const UserRenew: React.FC = () => {
             </div>
           </div>
           <div className="flex-1 overflow-y-auto hidden-scrollbar pb-24">
-            <h3 className="text-sm font-black text-text-main uppercase tracking-tight mb-4 mx-2">Transaction History</h3>
-            <div className="space-y-3 px-2">
+            <h3 className="text-sm font-black text-text-main uppercase tracking-tight mb-3">Transaction History</h3>
+            <div className="space-y-3">
                 {receivedTransactions.length === 0 ? (
-                  <div className="bg-theme-card p-12 rounded-3xl text-center shadow-sm border border-black/5 dark:border-white/5 mx-2">
+                  <div className="bg-theme-card p-12 rounded-3xl text-center shadow-sm border border-black/5 dark:border-white/5">
                     <Clock size={40} className="mx-auto mb-4 text-gray-300" />
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">No history recorded yet</p>
                   </div>
