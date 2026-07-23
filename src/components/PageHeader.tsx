@@ -5,7 +5,7 @@ import {
   Search, 
   Home, 
   Bell, 
-  Diamond, 
+  Moon, 
   Sun 
 } from 'lucide-react';
 
@@ -145,6 +145,8 @@ const PageHeader: React.FC = () => {
 
   const title = getTitle();
 
+  const isMainPage = (currentView === 'DASHBOARD' || !currentView || isFirstLoginRequired) && !selectedNotification && !activeDetailView && !activeSection && !showReceivedBreakdown && !showPendingBreakdown && !overrideTitle && !customHeaderTitle;
+
   return (
     <header 
       className="z-[100] w-full shadow-sm transition-colors flex flex-col safe-top shrink-0"
@@ -153,12 +155,12 @@ const PageHeader: React.FC = () => {
         background: wallpaper ? `url(${wallpaper}) center/cover no-repeat fixed` : effectiveHeaderBg
       }}
     >
-      <div className="h-16 flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12">
-        <div className="flex items-center gap-2">
-          {(currentView === 'DASHBOARD' || !currentView || isFirstLoginRequired) && !selectedNotification && !activeDetailView && !activeSection && !showReceivedBreakdown && !showPendingBreakdown && !overrideTitle && !customHeaderTitle ? (
+      <div className="h-16 flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12 w-full gap-2">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          {isMainPage ? (
             <button 
               onClick={() => !isFirstLoginRequired && setIsDrawerOpen(true)}
-              className={`lg:hidden p-2 rounded-lg transition-colors ${isFirstLoginRequired ? 'opacity-0 pointer-events-none' : ''}`}
+              className={`lg:hidden p-2 rounded-lg transition-colors shrink-0 ${isFirstLoginRequired ? 'opacity-0 pointer-events-none' : ''}`}
               style={{ color: headerTextColor }}
             >
               <Menu size={24} />
@@ -166,13 +168,13 @@ const PageHeader: React.FC = () => {
           ) : !isFirstLoginRequired ? (
             <button 
               onClick={(e) => handleBackClick(e)}
-              className="p-2 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+              className="p-2 rounded-lg transition-colors flex items-center gap-1 cursor-pointer shrink-0"
               style={{ color: headerTextColor }}
             >
               <ChevronLeft size={24} />
             </button>
           ) : null}
-          <h1 className="text-lg lg:text-xl font-black tracking-widest" style={{ color: headerTextColor }}>
+          <h1 className="text-lg lg:text-xl font-black tracking-widest truncate" style={{ color: headerTextColor }}>
             {customHeaderTitle ? customHeaderTitle : overrideTitle ? overrideTitle : toTitleCase((() => {
               if (selectedNotification) return 'Notification Detail';
               if (showReceivedBreakdown) return 'Received breakdown';
@@ -209,7 +211,7 @@ const PageHeader: React.FC = () => {
           </h1>
         </div>
 
-        <div className="flex items-center gap-2 lg:gap-4">
+        <div className="flex items-center gap-2 lg:gap-4 shrink-0">
           {/* Desktop Quick Search */}
           {isAdmin && (
             <div className="hidden lg:flex items-center border rounded-lg px-3 py-1.5 gap-2 w-64 shadow-sm quick-search-container" style={{ borderColor: headerTextColor === '#ffffff' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)' }}>
@@ -267,7 +269,7 @@ const PageHeader: React.FC = () => {
             style={{ color: headerTextColor }}
             title="Toggle Theme Mode"
           >
-            {appThemeMode === 'light' ? <Diamond size={20} /> : <Sun size={20} />}
+            {appThemeMode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
           </button>
         </div>
       </div>

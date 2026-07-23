@@ -20,6 +20,16 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        input, textarea, [contenteditable="true"] {
+            -webkit-touch-callout: default;
+            -webkit-user-select: auto;
+            user-select: auto;
+        }
         body {
             font-family: 'Inter', 'Noto Sans Bengali', sans-serif;
             -webkit-tap-highlight-color: transparent;
@@ -129,6 +139,36 @@
     </style>
 <link rel="stylesheet" href="/index.css">
 
+<script>
+  // Prevent pinch zoom
+  document.addEventListener('touchstart', function(event) {
+    if (event.touches.length > 1) {
+      event.preventDefault();
+    }
+  }, { passive: false });
+
+  // Prevent double tap zoom
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function(event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, { passive: false });
+  
+  // Prevent gesture zoom on iOS
+  document.addEventListener('gesturestart', function(e) {
+    e.preventDefault();
+  });
+
+  // Prevent context menu (Download, Share, Print) on long press
+  document.addEventListener('contextmenu', function(e) {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.isContentEditable) {
+      e.preventDefault();
+    }
+  });
+</script>
 <script type="importmap">
 {
   "imports": {
@@ -140,10 +180,10 @@
   }
 }
 </script>
-  <script type="module" crossorigin src="/assets/index-Bu9DB3E2.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DTisUlEc.css">
+  <script type="module" crossorigin src="/assets/index-DH17k9-v.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-P81RQupk.css">
 </head>
-<body class="bg-[#207E4A] text-white transition-colors duration-300">
+<body class="transition-colors duration-300" style="background-color: var(--app-bg, #000000);">
     <div id="root"></div>
 </body>
 </html>

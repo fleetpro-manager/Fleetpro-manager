@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+input, textarea, [contenteditable="true"] {
+  -webkit-touch-callout: default;
+  -webkit-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto;
+}
+
 /* Global Smooth Slide-In Animation (Disabled) */
 .smooth-slide-in {
   animation: none !important;

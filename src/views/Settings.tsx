@@ -11,7 +11,9 @@ import { QRCodeSVG } from 'qrcode.react';
 import { storageService } from '@/services/storageService';
 import GlobalFullscreenSelect from '@/components/GlobalFullscreenSelect';
 import * as OTPAuth from 'otpauth';
-import { BiometricPrompt } from '../components/BiometricPrompt';
+import { isNativeBiometricSupported, setNativeBiometricCredentials, verifyNativeBiometric, deleteNativeBiometricCredentials } from '@/utils/nativeBiometrics';
+import { getFirebaseCollection } from '@/services/firebase';
+import bcrypt from 'bcryptjs';
 
 const Settings: React.FC = () => {
   const { theme, setTheme, language, setLanguage, user, setUser, updateUser, logout, setView, zoom, setZoom, wallpaper, setWallpaper, loginWallpaper, setLoginWallpaper, loginBackgroundColor, setLoginBackgroundColor, backgroundColor, setBackgroundColor, fontStyle, setFontStyle, fontSize, setFontSize, fontBold, setFontBold, currencies, selectedCurrency, setSelectedCurrency, showFeedback, setSelectedUser, headerBg, setHeaderBg, setNavBg, appThemeMode, setAppThemeMode, appGrid, setAppGrid, activeSection, setActiveSection, logo, setLogo, exportData, importData, exportLocalData, importLocalData, currentThemeObj, adminPin, setAdminPin, confirmAction, primaryColor: storePrimaryColor, setPrimaryColor, setNavigationDirection, navigationDirection } = useStore();
@@ -23,30 +25,88 @@ const Settings: React.FC = () => {
   const [isFaceLock, setIsFaceLock] = useState(() => localStorage.getItem('fleetpro_biometric_face_enabled') === 'true');
   const [isTransactionFingerprint, setIsTransactionFingerprint] = useState(() => localStorage.getItem('fleetpro_biometric_transaction_enabled') === 'true');
   
-  const [isBioPromptOpen, setIsBioPromptOpen] = useState(false);
-  const [bioPromptMode, setBioPromptMode] = useState<'fingerprint' | 'face' | 'transaction'>('fingerprint');
+  const [showBioVerifyModal, setShowBioVerifyModal] = useState(false);
+  const [bioVerifyPassword, setBioVerifyPassword] = useState('');
+  const [bioVerifyLoading, setBioVerifyLoading] = useState(false);
   const [pendingToggleType, setPendingToggleType] = useState<'login' | 'face' | 'transaction' | null>(null);
 
-  const handleBioSuccess = () => {
-    setIsBioPromptOpen(false);
-    if (pendingToggleType === 'login') {
-      setIsLoginFingerprint(true);
-      localStorage.setItem('fleetpro_biometric_login_enabled', 'true');
-      if (user) {
-        localStorage.setItem('fleetpro_biometric_username', user.userId || user.email || user.id);
-        localStorage.setItem('fleetpro_biometric_password_hash', user.password || '');
-      }
-      showFeedback(language === 'bn' ? 'লগইন ফিঙ্গারপ্রিন্ট সফলভাবে সক্রিয় করা হয়েছে!' : 'Login Fingerprint activated successfully!');
-    } else if (pendingToggleType === 'face') {
-      setIsFaceLock(true);
-      localStorage.setItem('fleetpro_biometric_face_enabled', 'true');
-      showFeedback(language === 'bn' ? 'ফেস লক সফলভাবে সক্রিয় করা হয়েছে!' : 'Face Lock activated successfully!');
-    } else if (pendingToggleType === 'transaction') {
-      setIsTransactionFingerprint(true);
-      localStorage.setItem('fleetpro_biometric_transaction_enabled', 'true');
-      showFeedback(language === 'bn' ? 'ট্রানজেকশন ফিঙ্গারপ্রিন্ট সফলভাবে সক্রিয় করা হয়েছে!' : 'Transaction Fingerprint activated successfully!');
+  const handleVerifyBioPassword = async () => {
+    if (!bioVerifyPassword) {
+      showFeedback(language === 'bn' ? 'পাসওয়ার্ড দিন' : 'Please enter your password', 'error');
+      return;
     }
-    setPendingToggleType(null);
+    
+    if (!user) return;
+    
+    setBioVerifyLoading(true);
+    
+    try {
+      const collName = user.role === 'ADMIN' ? 'admins' : 'users';
+      const usersCol = await getFirebaseCollection(collName) || [];
+      const currentUser = usersCol.find((u: any) => u.id === user.id);
+      
+      if (!currentUser) {
+        showFeedback(language === 'bn' ? 'ব্যবহারকারী পাওয়া যায়নি' : 'User not found', 'error');
+        setBioVerifyLoading(false);
+        return;
+      }
+      
+      const isCorrect = await bcrypt.compare(bioVerifyPassword, currentUser.password);
+      if (!isCorrect) {
+        showFeedback(language === 'bn' ? 'ভুল পাসওয়ার্ড!' : 'Incorrect password!', 'error');
+        setBioVerifyLoading(false);
+        return;
+      }
+      
+      // Save plain password locally before clearing state
+      const plainPassword = bioVerifyPassword;
+      // Password verified, now check native biometrics
+      setShowBioVerifyModal(false);
+      setBioVerifyPassword('');
+      setBioVerifyLoading(false);
+      
+      const isSupported = await isNativeBiometricSupported();
+      if (!isSupported) {
+        showFeedback(language === 'bn' ? 'আপনার ডিভাইসে ফিঙ্গারপ্রিন্ট সাপোর্ট করে না' : 'Biometrics not supported on this device', 'error');
+        return;
+      }
+      
+      const verified = await verifyNativeBiometric(
+        language === 'bn' ? 'ফিঙ্গারপ্রিন্ট সেটআপ করুন' : 'Setup Fingerprint',
+        language === 'bn' ? 'ফিঙ্গারপ্রিন্ট নিশ্চিত করুন' : 'Confirm fingerprint to enable',
+        language,
+        showFeedback
+      );
+      
+      if (verified) {
+        // Use currentUser.userId or currentUser.email or currentUser.id
+        const bioUsername = currentUser.userId || currentUser.email || currentUser.id;
+        const success = await setNativeBiometricCredentials(bioUsername, plainPassword);
+        
+        if (success) {
+          if (pendingToggleType === 'login') {
+            setIsLoginFingerprint(true);
+            localStorage.setItem('fleetpro_biometric_login_enabled', 'true');
+            showFeedback(language === 'bn' ? 'লগইন ফিঙ্গারপ্রিন্ট সফলভাবে সক্রিয় করা হয়েছে!' : 'Login Fingerprint activated successfully!');
+          } else if (pendingToggleType === 'face') {
+            setIsFaceLock(true);
+            localStorage.setItem('fleetpro_biometric_face_enabled', 'true');
+            showFeedback(language === 'bn' ? 'ফেস লক সফলভাবে সক্রিয় করা হয়েছে!' : 'Face Lock activated successfully!');
+          } else if (pendingToggleType === 'transaction') {
+            setIsTransactionFingerprint(true);
+            localStorage.setItem('fleetpro_biometric_transaction_enabled', 'true');
+            showFeedback(language === 'bn' ? 'ট্রানজেকশন ফিঙ্গারপ্রিন্ট সফলভাবে সক্রিয় করা হয়েছে!' : 'Transaction Fingerprint activated successfully!');
+          }
+        } else {
+          showFeedback(language === 'bn' ? 'ফিঙ্গারপ্রিন্ট সংরক্ষণ করতে সমস্যা হয়েছে' : 'Failed to save biometric credentials', 'error');
+        }
+      }
+      setPendingToggleType(null);
+    } catch (err: any) {
+      console.error(err);
+      showFeedback(err.message || 'Verification error', 'error');
+      setBioVerifyLoading(false);
+    }
   };
   
   const handleLogout = () => {
@@ -1008,44 +1068,46 @@ const Settings: React.FC = () => {
                 </div>
 
                 {/* Login Page Background Image */}
-                <div className="p-3 bg-theme-card rounded-lg space-y-2 !border-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Lock size={18} style={{ color: primaryColor }} />
-                    <p className="text-xs font-black text-text-main uppercase">Login Page Background Image</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <input 
-                      type="file" 
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setLoginWallpaper(reader.result as string);
-                            showFeedback('Login wallpaper updated');
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                      className="w-full text-xs text-text-main file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--primary)] file:text-white hover:file:opacity-90 cursor-pointer file:cursor-pointer transition-colors !border-0 !outline-none"
-                    />
-                  </div>
+                {user?.role === 'ADMIN' && (
+                  <div className="p-3 bg-theme-card rounded-lg space-y-2 !border-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Lock size={18} style={{ color: primaryColor }} />
+                      <p className="text-xs font-black text-text-main uppercase">Login Page Background Image</p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setLoginWallpaper(reader.result as string);
+                              showFeedback('Login wallpaper updated');
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className="w-full text-xs text-text-main file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--primary)] file:text-white hover:file:opacity-90 cursor-pointer file:cursor-pointer transition-colors !border-0 !outline-none"
+                      />
+                    </div>
 
-                  {loginWallpaper && (
-                    <button 
-                      
-                      onClick={() => {
-                        setLoginWallpaper('');
-                        showFeedback('Login wallpaper removed');
-                      }}
-                      className="w-full py-2 text-red-500 font-bold text-xs rounded-lg hover:bg-red-50 transition-colors border border-red-500/10"
-                    >
-                      Remove Login Wallpaper
-                    </button>
-                  )}
-                </div>
+                    {loginWallpaper && (
+                      <button 
+                        
+                        onClick={() => {
+                          setLoginWallpaper('');
+                          showFeedback('Login wallpaper removed');
+                        }}
+                        className="w-full py-2 text-red-500 font-bold text-xs rounded-lg hover:bg-red-50 transition-colors border border-red-500/10"
+                      >
+                        Remove Login Wallpaper
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -1319,17 +1381,15 @@ const Settings: React.FC = () => {
                       
                       {/* Modern Switch */}
                       <button 
-                        onClick={() => {
+                        onClick={async () => {
                           if (isLoginFingerprint) {
                             setIsLoginFingerprint(false);
                             localStorage.removeItem('fleetpro_biometric_login_enabled');
-                            localStorage.removeItem('fleetpro_biometric_username');
-                            localStorage.removeItem('fleetpro_biometric_password_hash');
+                            await deleteNativeBiometricCredentials();
                             showFeedback(language === 'bn' ? 'লগইন ফিঙ্গারপ্রিন্ট নিষ্ক্রিয় করা হয়েছে' : 'Login Fingerprint disabled');
                           } else {
-                            setBioPromptMode('fingerprint');
                             setPendingToggleType('login');
-                            setIsBioPromptOpen(true);
+                            setShowBioVerifyModal(true);
                           }
                         }}
                         className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${isLoginFingerprint ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-zinc-700'}`}
@@ -1357,15 +1417,15 @@ const Settings: React.FC = () => {
                       
                       {/* Modern Switch */}
                       <button 
-                        onClick={() => {
+                        onClick={async () => {
                           if (isFaceLock) {
                             setIsFaceLock(false);
                             localStorage.removeItem('fleetpro_biometric_face_enabled');
+                            await deleteNativeBiometricCredentials();
                             showFeedback(language === 'bn' ? 'ফেস লক নিষ্ক্রিয় করা হয়েছে' : 'Face Lock disabled');
                           } else {
-                            setBioPromptMode('face');
                             setPendingToggleType('face');
-                            setIsBioPromptOpen(true);
+                            setShowBioVerifyModal(true);
                           }
                         }}
                         className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${isFaceLock ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-zinc-700'}`}
@@ -1393,15 +1453,15 @@ const Settings: React.FC = () => {
                       
                       {/* Modern Switch */}
                       <button 
-                        onClick={() => {
+                        onClick={async () => {
                           if (isTransactionFingerprint) {
                             setIsTransactionFingerprint(false);
                             localStorage.removeItem('fleetpro_biometric_transaction_enabled');
+                            await deleteNativeBiometricCredentials();
                             showFeedback(language === 'bn' ? 'ট্রানজেকশন ফিঙ্গার নিষ্ক্রিয় করা হয়েছে' : 'Transaction Fingerprint disabled');
                           } else {
-                            setBioPromptMode('transaction');
                             setPendingToggleType('transaction');
-                            setIsBioPromptOpen(true);
+                            setShowBioVerifyModal(true);
                           }
                         }}
                         className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${isTransactionFingerprint ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-zinc-700'}`}
@@ -1413,24 +1473,70 @@ const Settings: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+
             )}
           </div>
         )}
 
-        {/* Biometric Prompt Portal Overlay */}
-        <BiometricPrompt 
-          isOpen={isBioPromptOpen}
-          mode={bioPromptMode}
-          action="enroll"
-          language={language}
-          username={user?.userId || user?.email || user?.id || 'biometric_user'}
-          userId={user?.id || 'biometric_user'}
-          onClose={() => {
-            setIsBioPromptOpen(false);
-            setPendingToggleType(null);
-          }}
-          onSuccess={handleBioSuccess}
-        />
+        {showBioVerifyModal && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+            <div 
+              className="w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden border border-neutral-200 dark:border-zinc-800/80 p-6 transition-all duration-300"
+              style={{
+                backgroundColor: (appThemeMode === 'dark' || theme === 'night-mode') ? '#002843' : '#ffffff',
+                color: (appThemeMode === 'dark' || theme === 'night-mode') ? '#ffffff' : '#111827'
+              }}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-text-main">
+                  {language === 'bn' ? 'পাসওয়ার্ড নিশ্চিত করুন' : 'Confirm Password'}
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowBioVerifyModal(false);
+                    setBioVerifyPassword('');
+                    setPendingToggleType(null);
+                  }}
+                  className="p-2 text-text-muted hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <p className="text-sm text-text-muted mb-6">
+                {language === 'bn' 
+                  ? 'ফিঙ্গারপ্রিন্ট বা ফেস লক সেটআপ করার আগে আপনার অ্যাকাউন্টের বর্তমান পাসওয়ার্ড দিন।'
+                  : 'Please enter your current account password before setting up biometric authentication.'}
+              </p>
+
+              <div className="space-y-4">
+                <InputField
+                  name="bioVerifyPassword"
+                  label={language === 'bn' ? 'পাসওয়ার্ড' : 'Password'}
+                  type="password"
+                  value={bioVerifyPassword}
+                  onChange={(e) => setBioVerifyPassword(e.target.value)}
+                  icon={<Lock size={20} />}
+                  disabled={bioVerifyLoading}
+                />
+
+                <button
+                  onClick={handleVerifyBioPassword}
+                  disabled={bioVerifyLoading || !bioVerifyPassword}
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center"
+                  style={{ backgroundColor: primaryColor }}
+                >
+                  {bioVerifyLoading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    language === 'bn' ? 'যাচাই করুন' : 'Verify & Continue'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 

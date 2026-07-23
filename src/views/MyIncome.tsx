@@ -38,7 +38,10 @@ import {
   Landmark,
   Briefcase,
   CircleDot,
-  Truck
+  Truck,
+  Bell,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { useStore, GLOBAL_TRANSITION, GLOBAL_VARIANTS } from '../store';
 import { TRANSLATIONS } from '../constants';
@@ -143,7 +146,7 @@ const SwipeToDeleteWrapper = ({ children, onDelete, itemVariants }: any) => {
 };
 
 const MyIncome: React.FC = () => {
-  const { language, setView, payments, trips, monthlyFiles, theme, headerBg, headerText, user, addPayment, updatePayment, removePayment, confirmAction, showFeedback, activeSection, setActiveSection, isNightMode, appThemeMode, setIsLoadingView, backgroundColor, wallpaper, currencies, selectedCurrency, isDarkMode: storeIsDarkMode, advanceReasons, setSelectedTrip, goBack, globalFilterMonth, setGlobalFilterMonth, globalFilterYear, setGlobalFilterYear, walletIncomeSources, walletDeductionReasons } = useStore();
+  const { language, setView, payments, trips, monthlyFiles, theme, headerBg, headerText, user, addPayment, updatePayment, removePayment, confirmAction, showFeedback, activeSection, setActiveSection, isNightMode, appThemeMode, setAppThemeMode, notifications, setIsLoadingView, backgroundColor, wallpaper, currencies, selectedCurrency, isDarkMode: storeIsDarkMode, advanceReasons, setSelectedTrip, goBack, globalFilterMonth, setGlobalFilterMonth, globalFilterYear, setGlobalFilterYear, walletIncomeSources, walletDeductionReasons } = useStore();
   
   const currency = useMemo(() => {
     return currencies.find(c => c.code === selectedCurrency) || currencies[0] || { code: 'QAR', symbol: 'QAR' };
@@ -158,6 +161,45 @@ const MyIncome: React.FC = () => {
         delayChildren: 0
       }
     }
+  };
+
+  const renderHeaderActions = () => {
+    const unreadCount = (notifications || []).filter((n: any) => !n.isRead).length;
+    return (
+      <div className="flex items-center gap-2 shrink-0">
+        <div className="relative">
+          <button 
+            onClick={() => {
+              setActiveSection(null);
+              setView('NOTIFICATIONS');
+            }}
+            className="p-2 rounded-lg transition-all opacity-70 relative"
+            style={{ color: 'var(--header-text)' }}
+          >
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold px-1 min-w-[16px] h-4 rounded-full flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+        </div>
+        <button 
+          onClick={() => {
+            if (appThemeMode === 'light') {
+              setAppThemeMode('dark');
+            } else {
+              setAppThemeMode('light');
+            }
+          }}
+          className="p-2 rounded-lg transition-all opacity-70"
+          style={{ color: 'var(--header-text)' }}
+          title="Toggle Theme Mode"
+        >
+          {appThemeMode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+        </button>
+      </div>
+    );
   };
 
   const itemVariants = {
@@ -195,7 +237,7 @@ const MyIncome: React.FC = () => {
 
 
 const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpaper, backgroundColor, isNightMode, appThemeMode, trips, monthlyFiles, payments }: any) => {
-  const { setIsLoadingView, user, removePayment, confirmAction, showFeedback, language, updateTrip, trips: storeTrips, activeSection, setActiveSection, goBack, setView, setSelectedTrip, globalFilterMonth, setGlobalFilterMonth, globalFilterYear, setGlobalFilterYear } = useStore();
+  const { setIsLoadingView, user, removePayment, confirmAction, showFeedback, language, updateTrip, trips: storeTrips, activeSection, setActiveSection, goBack, setView, setSelectedTrip, globalFilterMonth, setGlobalFilterMonth, globalFilterYear, setGlobalFilterYear, notifications, setAppThemeMode } = useStore();
   const selectedCategory = typeof activeSection === 'string' && activeSection.startsWith('PENDING_CATEGORY_')
     ? activeSection.replace('PENDING_CATEGORY_', '')
     : null;
@@ -211,6 +253,45 @@ const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpape
 
   // Popup Modal state
   const [selectedItemForPopup, setSelectedItemForPopup] = useState<any | null>(null);
+
+  const renderHeaderActions = () => {
+    const unreadCount = (notifications || []).filter((n: any) => !n.isRead).length;
+    return (
+      <div className="flex items-center gap-2 shrink-0">
+        <div className="relative">
+          <button 
+            onClick={() => {
+              onClose();
+              setView('NOTIFICATIONS');
+            }}
+            className="p-2 rounded-lg transition-all opacity-70 relative"
+            style={{ color: 'var(--header-text)' }}
+          >
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold px-1 min-w-[16px] h-4 rounded-full flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+        </div>
+        <button 
+          onClick={() => {
+            if (appThemeMode === 'light') {
+              setAppThemeMode('dark');
+            } else {
+              setAppThemeMode('light');
+            }
+          }}
+          className="p-2 rounded-lg transition-all opacity-70"
+          style={{ color: 'var(--header-text)' }}
+          title="Toggle Theme Mode"
+        >
+          {appThemeMode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+        </button>
+      </div>
+    );
+  };
 
   const getDynamicCardTitle = (categoryName: string) => {
     const cat = (categoryName || '').toUpperCase();
@@ -436,19 +517,20 @@ const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpape
               background: 'var(--header-bg)'
             }}
           >
-            <div className="h-16 flex items-center px-4">
-              <div className="flex items-center gap-3">
+            <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
                 <button 
                   onClick={onClose} 
-                  className="flex items-center justify-center transition-colors"
+                  className="flex items-center justify-center transition-colors shrink-0"
                   style={{ color: 'var(--header-text)' }}
                 >
                   <ChevronLeft size={24} />
                 </button>
-                <h3 className="text-sm font-bold uppercase tracking-tight" style={{ color: 'var(--header-text)' }}>
+                <h3 className="text-sm font-bold uppercase tracking-tight truncate" style={{ color: 'var(--header-text)' }}>
                   {language === 'bn' ? 'পেন্ডিং ব্যালেন্স' : 'Pending Balance'}
                 </h3>
               </div>
+              {renderHeaderActions()}
             </div>
           </div>
           <div className="flex-1 flex flex-col overflow-hidden relative">
@@ -578,8 +660,8 @@ const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpape
                 background: 'var(--header-bg)'
               }}
             >
-              <div className="h-16 flex items-center justify-between px-4">
-                <div className="flex items-center gap-3">
+              <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
                   <button 
                     onClick={() => {
                       if (selectedCategory) {
@@ -588,15 +670,16 @@ const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpape
                         onClose();
                       }
                     }}
-                    className="flex items-center justify-center transition-colors"
+                    className="flex items-center justify-center transition-colors shrink-0"
                     style={{ color: 'var(--header-text)' }}
                   >
                     <ChevronLeft size={24} />
                   </button>
-                  <h3 className="text-sm font-bold capitalize tracking-tight" style={{ color: 'var(--header-text)' }}>
+                  <h3 className="text-sm font-bold capitalize tracking-tight truncate" style={{ color: 'var(--header-text)' }}>
                     {selectedCategory ? `Pending ${formatCategoryHeader(selectedCategory)} Details` : 'Pending Details'}
                   </h3>
                 </div>
+                {renderHeaderActions()}
               </div>
             </div>
 
@@ -1487,17 +1570,18 @@ const SwipeTransactionCard = ({ payment, onClick, currency, isIncome, onDelete, 
             background: 'var(--header-bg)'
           }}
         >
-          <div className="h-16 flex items-center justify-between px-4">
-            <div className="flex items-center gap-3">
+          <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
               <button 
                 onClick={() => goBack()}
-                className="flex items-center justify-center transition-colors"
+                className="flex items-center justify-center transition-colors shrink-0"
                 style={{ color: 'var(--header-text)' }}
               >
                 <ChevronLeft size={24} />
               </button>
-              <h3 className="text-sm font-bold capitalize tracking-tight" style={{ color: 'var(--header-text)' }}>{selectedCategoryBreakdown ? `${formatCategoryHeader(selectedCategoryBreakdown)} ${isDeductionCategory ? 'Details' : 'Received Details'}` : 'Received Details'}</h3>
+              <h3 className="text-sm font-bold capitalize tracking-tight truncate" style={{ color: 'var(--header-text)' }}>{selectedCategoryBreakdown ? `${formatCategoryHeader(selectedCategoryBreakdown)} ${isDeductionCategory ? 'Details' : 'Received Details'}` : 'Received Details'}</h3>
             </div>
+            {renderHeaderActions()}
           </div>
         </div>
 

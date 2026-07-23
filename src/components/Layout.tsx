@@ -611,14 +611,19 @@ const Layout: React.FC<LayoutProps> = ({ children, title, hideHeader, hideBottom
             ))}
           </div>
 
-          <div className="py-4">
+          <div className="py-4 mt-auto border-t border-black/5 dark:border-white/5 pb-[calc(12px+env(safe-area-inset-bottom))]">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-4 h-8 px-3 rounded-md text-red-500 hover:bg-red-500/10 transition-all active:scale-[0.98] font-bold text-[10px] tracking-wider"
+              className="w-full flex items-center gap-4 h-8 px-3 rounded-md text-red-500 hover:bg-red-500/10 transition-all active:scale-[0.98] font-bold text-[10px] tracking-wider mb-2"
             >
               <LogOut size={26} />
               {isDesktopSidebarOpen && <span className="whitespace-nowrap">{toSentenceCase(t.LOGOUT)}</span>}
             </button>
+            <div className="px-3 py-1 text-center">
+              <p className="text-[9px] text-text-muted font-bold uppercase tracking-widest opacity-40">
+                {isDesktopSidebarOpen ? "VERSION 2.6.0 • SECURE CLOUD SYSTEM" : "v2.6.0"}
+              </p>
+            </div>
           </div>
         </aside>
       )}
@@ -809,19 +814,24 @@ const Layout: React.FC<LayoutProps> = ({ children, title, hideHeader, hideBottom
                   ))}
 
                   {/* Auth Button */}
-                  <div className="w-full pb-[calc(20px+env(safe-area-inset-bottom))]">
+                  <div className="w-full pb-[calc(30px+env(safe-area-inset-bottom))]">
                     <button
                       onClick={() => { 
                         if (user) handleLogout(); 
                         else setView('LOGIN');
                         setIsDrawerOpen(false); 
                       }}
-                      className="w-full flex items-center gap-5 h-12 px-6 transition-all font-black text-[11px] tracking-wide bg-transparent text-red-500 hover:bg-red-500/5 active:scale-[0.98]"
+                      className="w-full flex items-center gap-5 h-12 px-6 transition-all font-black text-[11px] tracking-wide bg-transparent text-red-500 hover:bg-red-500/5 active:scale-[0.98] mb-1"
                     >
                       {user ? <LogOut size={26} /> : <LogIn size={26} />}
                       <span className="whitespace-nowrap">{user ? t.LOGOUT : t.LOGIN}</span>
                     </button>
-                    <div className="h-[1px] ml-6 w-[calc(100%-24px)]" style={{ backgroundColor: addOpacityToHex(currentThemeObj.primary, 0.3) }} />
+                    <div className="h-[1px] ml-6 w-[calc(100%-24px)] mb-3" style={{ backgroundColor: addOpacityToHex(currentThemeObj.primary, 0.3) }} />
+                    <div className="px-6 py-1 text-center">
+                      <p className="text-[9px] text-text-muted font-bold uppercase tracking-widest opacity-40">
+                        VERSION 2.6.0 • SECURE CLOUD SYSTEM
+                      </p>
+                    </div>
                   </div>
                 </nav>
               </div>

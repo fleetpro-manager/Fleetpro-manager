@@ -20,6 +20,16 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        input, textarea, [contenteditable="true"] {
+            -webkit-touch-callout: default;
+            -webkit-user-select: auto;
+            user-select: auto;
+        }
         body {
             font-family: 'Inter', 'Noto Sans Bengali', sans-serif;
             -webkit-tap-highlight-color: transparent;
@@ -160,6 +170,13 @@
   // Prevent gesture zoom on iOS
   document.addEventListener('gesturestart', function(e) {
     e.preventDefault();
+  });
+
+  // Prevent context menu (Download, Share, Print) on long press
+  document.addEventListener('contextmenu', function(e) {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.isContentEditable) {
+      e.preventDefault();
+    }
   });
 </script>
 </head>

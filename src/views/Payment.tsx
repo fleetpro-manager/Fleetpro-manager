@@ -49,7 +49,10 @@ import {
   Scale,
   Sparkles,
   Square,
-  CheckSquare
+  CheckSquare,
+  Bell,
+  Moon,
+  Sun
 } from 'lucide-react';
 
 import { jsPDF } from "jspdf";
@@ -204,7 +207,7 @@ const PaymentView: React.FC = () => {
     language, payments, addPayment, updatePayment, removePayment, clearPayments, 
     confirmAction, currentFile, setCurrentFile, trips, showFeedback, theme, updateTrip, 
     headerBg, headerText, monthlyFiles, setView, user, users, updateUser, 
-    isNightMode, appThemeMode, backgroundColor, wallpaper, 
+    isNightMode, appThemeMode, setAppThemeMode, notifications, backgroundColor, wallpaper, 
     showReceivedBreakdown, setShowReceivedBreakdown, 
     showPendingBreakdown, setShowPendingBreakdown, 
     countries, banks, branches, routingNumbers, setIsLoadingView, isEntryFormOpen, setIsEntryFormOpen,
@@ -878,6 +881,53 @@ const PaymentView: React.FC = () => {
   const [selectedTripGroupForPopup, setSelectedTripGroupForPopup] = useState<any | null>(null);
   const [selectedConsolidatedTripForPopup, setSelectedConsolidatedTripForPopup] = useState<any | null>(null);
   const [selectedReceivedItemForPopup, setSelectedReceivedItemForPopup] = useState<any | null>(null);
+
+  const renderHeaderActions = () => {
+    const unreadCount = (notifications || []).filter((n: any) => !n.isRead).length;
+    return (
+      <div className="flex items-center gap-2 shrink-0">
+        <div className="relative">
+          <button 
+            onClick={() => {
+              setSelectedPendingCategory(null);
+              setSelectedReceivedCategory(null);
+              setShowReceivedBreakdown(false);
+              setShowPendingBreakdown(false);
+              setViewingCategory(null);
+              setIsEntryFormOpen(false);
+              setShowPendingSelection(false);
+              setShowTripDieselSubPage(false);
+              setShowUserRenewSelection(false);
+              setView('NOTIFICATIONS');
+            }}
+            className="p-2 rounded-lg transition-all opacity-70 relative"
+            style={{ color: 'var(--header-text)' }}
+          >
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold px-1 min-w-[16px] h-4 rounded-full flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+        </div>
+        <button 
+          onClick={() => {
+            if (appThemeMode === 'light') {
+              setAppThemeMode('dark');
+            } else {
+              setAppThemeMode('light');
+            }
+          }}
+          className="p-2 rounded-lg transition-all opacity-70"
+          style={{ color: 'var(--header-text)' }}
+          title="Toggle Theme Mode"
+        >
+          {appThemeMode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+        </button>
+      </div>
+    );
+  };
 
   useEffect(() => {
     const isOpen = !!(
@@ -2022,8 +2072,8 @@ const PaymentView: React.FC = () => {
                   background: 'var(--header-bg)'
                 }}
               >
-                <div className="h-16 flex items-center px-4">
-                  <div className="flex items-center gap-3">
+                <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
                     <button 
                       onClick={() => {
                         setSelectedPendingCategory(null);
@@ -2031,15 +2081,16 @@ const PaymentView: React.FC = () => {
                         setPendingFilterYear('ALL');
                         setPendingSearchQuery('');
                       }}
-                      className="flex items-center justify-center transition-colors"
+                      className="flex items-center justify-center transition-colors shrink-0"
                       style={{ color: 'var(--header-text)' }}
                     >
                       <ChevronLeft size={24} />
                     </button>
-                    <h3 className="text-sm font-bold uppercase tracking-tight" style={{ color: 'var(--header-text)' }}>
+                    <h3 className="text-sm font-bold uppercase tracking-tight truncate" style={{ color: 'var(--header-text)' }}>
                       {selectedPendingCategory ? `Pending ${formatCategoryHeader(selectedPendingCategory)} Details` : 'Pending Details'}
                     </h3>
                   </div>
+                  {renderHeaderActions()}
                 </div>
               </div>
 
@@ -2709,8 +2760,8 @@ const PaymentView: React.FC = () => {
                   background: 'var(--header-bg)'
                 }}
               >
-                <div className="h-16 flex items-center px-4">
-                  <div className="flex items-center gap-3">
+                <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
                     <button 
                       onClick={() => {
                         setSelectedReceivedCategory(null);
@@ -2720,15 +2771,16 @@ const PaymentView: React.FC = () => {
                         setExtraFuelFilterYear('ALL');
                         setShowReceivedBreakdown(false);
                       }}
-                      className="flex items-center justify-center transition-colors"
+                      className="flex items-center justify-center transition-colors shrink-0"
                       style={{ color: 'var(--header-text)' }}
                     >
                       <ChevronLeft size={24} />
                     </button>
-                    <h3 className="text-sm font-bold uppercase tracking-tight" style={{ color: 'var(--header-text)' }}>
+                    <h3 className="text-sm font-bold uppercase tracking-tight truncate" style={{ color: 'var(--header-text)' }}>
                       {selectedReceivedCategory ? `${formatCategoryHeader(selectedReceivedCategory)} Received Details` : 'Received Details'}
                     </h3>
                   </div>
+                  {renderHeaderActions()}
                 </div>
               </div>
 
@@ -3681,8 +3733,8 @@ const PaymentView: React.FC = () => {
                   background: 'var(--header-bg)'
                 }}
               >
-                <div className="h-16 flex items-center px-4">
-                  <div className="flex items-center gap-3">
+                <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
                     <button 
                       onClick={() => {
                         setShowReceivedBreakdown(false);
@@ -3690,15 +3742,16 @@ const PaymentView: React.FC = () => {
                         setReceivedListFilterYear('ALL');
                         setReceivedListSearchQuery('');
                       }}
-                      className="flex items-center justify-center transition-colors"
+                      className="flex items-center justify-center transition-colors shrink-0"
                       style={{ color: 'var(--header-text)' }}
                     >
                       <ChevronLeft size={24} />
                     </button>
-                    <h3 className="text-sm font-bold uppercase tracking-tight" style={{ color: 'var(--header-text)' }}>
+                    <h3 className="text-sm font-bold uppercase tracking-tight truncate" style={{ color: 'var(--header-text)' }}>
                       {language === 'bn' ? 'রিসিভড বিবরণী' : 'Received Details'}
                     </h3>
                   </div>
+                  {renderHeaderActions()}
                 </div>
               </div>
 
@@ -3913,8 +3966,8 @@ const PaymentView: React.FC = () => {
                   background: 'var(--header-bg)'
                 }}
               >
-                <div className="h-16 flex items-center px-4">
-                  <div className="flex items-center gap-3">
+                <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
                     <button 
                       onClick={() => {
                         setShowPendingBreakdown(false);
@@ -3922,15 +3975,16 @@ const PaymentView: React.FC = () => {
                         setPendingListFilterYear('ALL');
                         setPendingListSearchQuery('');
                       }}
-                      className="flex items-center justify-center transition-colors"
+                      className="flex items-center justify-center transition-colors shrink-0"
                       style={{ color: 'var(--header-text)' }}
                     >
                       <ChevronLeft size={24} />
                     </button>
-                    <h3 className="text-sm font-bold uppercase tracking-tight" style={{ color: 'var(--header-text)' }}>
+                    <h3 className="text-sm font-bold uppercase tracking-tight truncate" style={{ color: 'var(--header-text)' }}>
                       {language === 'bn' ? 'পেন্ডিং ব্যালেন্স বিবরণী' : 'Pending Balance Details'}
                     </h3>
                   </div>
+                  {renderHeaderActions()}
                 </div>
               </div>
 
@@ -4468,14 +4522,17 @@ const PaymentView: React.FC = () => {
                   className="shrink-0 shadow-sm safe-top"
                   style={{ background: 'var(--header-bg)', color: 'var(--header-text)' }}
                 >
-                  <div className="h-16 flex items-center px-4 gap-4">
-                    <button 
-                      onClick={() => setViewingCategory(null)} 
-                      className="p-2 hover:bg-white/10 rounded-full transition-colors"
-                    >
-                      <X size={20} />
-                    </button>
-                    <h3 className="text-sm font-black uppercase tracking-widest">{viewingCategory} History</h3>
+                  <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <button 
+                        onClick={() => setViewingCategory(null)} 
+                        className="p-2 hover:bg-white/10 rounded-full transition-colors shrink-0"
+                      >
+                        <X size={20} />
+                      </button>
+                      <h3 className="text-sm font-black uppercase tracking-widest truncate">{viewingCategory} History</h3>
+                    </div>
+                    {renderHeaderActions()}
                   </div>
                 </div>
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-6 min-h-0">
@@ -4809,14 +4866,17 @@ const PaymentView: React.FC = () => {
                     className="shrink-0 shadow-sm safe-top border-b border-black/5 dark:border-white/5"
                     style={{ background: 'var(--header-bg)', color: 'var(--header-text)' }}
                   >
-                    <div className="h-16 flex items-center px-4">
-                      <button 
-                        onClick={() => { setIsEntryFormOpen(false); setEditingPayment(null); }} 
-                        className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-colors mr-2 cursor-pointer active:scale-95"
-                      >
-                        <ArrowLeft size={20} />
-                      </button>
-                      <h3 className="text-sm font-black uppercase tracking-widest">{editingPayment ? "Edit Transaction" : "New Transaction"}</h3>
+                    <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+                      <div className="flex items-center flex-1 min-w-0">
+                        <button 
+                          onClick={() => { setIsEntryFormOpen(false); setEditingPayment(null); }} 
+                          className="p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-colors mr-2 cursor-pointer active:scale-95 shrink-0"
+                        >
+                          <ArrowLeft size={20} />
+                        </button>
+                        <h3 className="text-sm font-black uppercase tracking-widest truncate">{editingPayment ? "Edit Transaction" : "New Transaction"}</h3>
+                      </div>
+                      {renderHeaderActions()}
                     </div>
                   </div>
 
@@ -4850,22 +4910,25 @@ const PaymentView: React.FC = () => {
                     color: 'var(--header-text)'
                   }}
                 >
-                  <div className="h-16 flex items-center px-4">
-                    <button 
-                      onClick={() => {
-                        if (selectedPendingFile) {
-                          setSelectedPendingFile(null);
-                        } else {
-                          setShowPendingSelection(false);
-                        }
-                      }} 
-                      className="p-2 hover:bg-white/10 rounded-full transition-colors mr-2"
-                    >
-                      <ArrowLeft size={20} />
-                    </button>
-                    <h3 className="text-sm font-black uppercase tracking-widest">
-                      {selectedPendingFile ? 'Select Items' : 'Pending Monthly Files'}
-                    </h3>
+                  <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+                    <div className="flex items-center flex-1 min-w-0">
+                      <button 
+                        onClick={() => {
+                          if (selectedPendingFile) {
+                            setSelectedPendingFile(null);
+                          } else {
+                            setShowPendingSelection(false);
+                          }
+                        }} 
+                        className="p-2 hover:bg-white/10 rounded-full transition-colors mr-2 shrink-0"
+                      >
+                        <ArrowLeft size={20} />
+                      </button>
+                      <h3 className="text-sm font-black uppercase tracking-widest truncate">
+                        {selectedPendingFile ? 'Select Items' : 'Pending Monthly Files'}
+                      </h3>
+                    </div>
+                    {renderHeaderActions()}
                   </div>
                 </div>
                 <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 min-h-0">
@@ -4984,18 +5047,21 @@ const PaymentView: React.FC = () => {
                   color: 'var(--header-text)'
                 }}
               >
-                <div className="h-16 flex items-center px-4">
-                  <button 
-                    onClick={() => {
-                      setShowTripDieselSubPage(false);
-                    }} 
-                    className="p-2 hover:bg-white/10 rounded-full transition-colors mr-2"
-                  >
-                    <ArrowLeft size={20} />
-                  </button>
-                   <h3 className="text-sm font-black uppercase tracking-widest">
-                    {formCategory || 'Category'} Allocation
-                  </h3>
+                <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+                  <div className="flex items-center flex-1 min-w-0">
+                    <button 
+                      onClick={() => {
+                        setShowTripDieselSubPage(false);
+                      }} 
+                      className="p-2 hover:bg-white/10 rounded-full transition-colors mr-2 shrink-0"
+                    >
+                      <ArrowLeft size={20} />
+                    </button>
+                    <h3 className="text-sm font-black uppercase tracking-widest truncate">
+                      {formCategory || 'Category'} Allocation
+                    </h3>
+                  </div>
+                  {renderHeaderActions()}
                 </div>
               </div>
 
@@ -5566,14 +5632,17 @@ const PaymentView: React.FC = () => {
                     color: 'var(--header-text)'
                   }}
                 >
-                  <div className="h-16 flex items-center px-4">
-                    <button 
-                      onClick={() => setShowUserRenewSelection(false)} 
-                      className="p-2 hover:bg-white/10 rounded-full transition-colors mr-2"
-                    >
-                      <ArrowLeft size={20} />
-                    </button>
-                    <h3 className="text-sm font-black uppercase tracking-widest">Select User to Renew</h3>
+                  <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+                    <div className="flex items-center flex-1 min-w-0">
+                      <button 
+                        onClick={() => setShowUserRenewSelection(false)} 
+                        className="p-2 hover:bg-white/10 rounded-full transition-colors mr-2 shrink-0"
+                      >
+                        <ArrowLeft size={20} />
+                      </button>
+                      <h3 className="text-sm font-black uppercase tracking-widest truncate">Select User to Renew</h3>
+                    </div>
+                    {renderHeaderActions()}
                   </div>
                 </div>
                 {/* Content */}

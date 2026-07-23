@@ -44,6 +44,9 @@ import {
   ChevronRight,
   ArrowDownLeft,
   Package,
+  Bell,
+  Moon,
+  Sun,
 } from 'lucide-react';
 import { getContrastColor } from '../utils/colorUtils';
 import { formatCategoryHeader } from '../utils/formatUtils';
@@ -235,7 +238,46 @@ const AvailableBalancePage = ({
 }: any) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedVehicleInspectionItem, setSelectedVehicleInspectionItem] = useState<any | null>(null);
-  const { user, removePayment, confirmAction, showFeedback, language } = useStore();
+  const { user, removePayment, confirmAction, showFeedback, language, setAppThemeMode, notifications, setView } = useStore();
+
+  const renderHeaderActions = () => {
+    const unreadCount = (notifications || []).filter((n: any) => !n.isRead).length;
+    return (
+      <div className="flex items-center gap-2 shrink-0">
+        <div className="relative">
+          <button 
+            onClick={() => {
+              onClose();
+              setView('NOTIFICATIONS');
+            }}
+            className="p-2 rounded-lg transition-all opacity-70 relative"
+            style={{ color: 'var(--header-text)' }}
+          >
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold px-1 min-w-[16px] h-4 rounded-full flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+        </div>
+        <button 
+          onClick={() => {
+            if (appThemeMode === 'light') {
+              setAppThemeMode('dark');
+            } else {
+              setAppThemeMode('light');
+            }
+          }}
+          className="p-2 rounded-lg transition-all opacity-70"
+          style={{ color: 'var(--header-text)' }}
+          title="Toggle Theme Mode"
+        >
+          {appThemeMode === 'light' ? <Moon size={20} strokeWidth={2.5} /> : <Sun size={20} strokeWidth={2.5} />}
+        </button>
+      </div>
+    );
+  };
 
   const [filterMonth, setFilterMonth] = useState<string>(String(currentFile?.month || 'ALL'));
   const [filterYear, setFilterYear] = useState<string>(String(currentFile?.year || 'ALL'));
@@ -454,17 +496,18 @@ const AvailableBalancePage = ({
           background: 'var(--header-bg)'
         }}
       >
-        <div className="h-16 flex items-center px-4">
-          <div className="flex items-center gap-3">
+        <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
             <button 
               onClick={onClose} 
-              className="flex items-center justify-center transition-colors"
+              className="flex items-center justify-center transition-colors shrink-0"
               style={{ color: 'var(--header-text)' }}
             >
               <ChevronLeft size={24} />
             </button>
-            <h3 className="text-sm font-bold capitalize tracking-tight" style={{ color: 'var(--header-text)' }}>Available Balance</h3>
+            <h3 className="text-sm font-bold capitalize tracking-tight truncate" style={{ color: 'var(--header-text)' }}>Available Balance</h3>
           </div>
+          {renderHeaderActions()}
         </div>
       </div>
       <div 
@@ -559,21 +602,22 @@ const AvailableBalancePage = ({
                 background: 'var(--header-bg)'
               }}
             >
-              <div className="h-14 flex items-center px-4">
-                <div className="flex items-center gap-3">
+              <div className="h-14 flex items-center justify-between px-4 w-full gap-2">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
                   <button 
                     onClick={() => {
                       setSelectedCategory(null);
                     }}
-                    className="flex items-center justify-center transition-colors"
+                    className="flex items-center justify-center transition-colors shrink-0"
                     style={{ color: 'var(--header-text)' }}
                   >
                     <ChevronLeft size={24} />
                   </button>
-                  <h3 className="text-sm font-bold capitalize tracking-tight" style={{ color: 'var(--header-text)' }}>
+                  <h3 className="text-sm font-bold capitalize tracking-tight truncate" style={{ color: 'var(--header-text)' }}>
                     {selectedCategory ? `${formatCategoryHeader(selectedCategory)} Received Details` : 'Received Details'}
                   </h3>
                 </div>
+                {renderHeaderActions()}
               </div>
             </div>
 
@@ -1327,6 +1371,8 @@ const AvailableBalancePage = ({
                   });
                 })()
               )}
+              {/* Extra Safe-Area Spacer to prevent content from being covered by the bottom navigation bar */}
+              <div className="h-44 sm:h-48 w-full shrink-0" />
             </div>
           </div>
         )}
@@ -1423,7 +1469,46 @@ const AvailableBalancePage = ({
 const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpaper, backgroundColor, isNightMode, appThemeMode, trips, monthlyFiles, payments, currentFile }: any) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedVehicleInspectionItem, setSelectedVehicleInspectionItem] = useState<any | null>(null);
-  const { setIsLoadingView, user, language } = useStore();
+  const { setIsLoadingView, user, language, setAppThemeMode, notifications, setView } = useStore();
+
+  const renderHeaderActions = () => {
+    const unreadCount = (notifications || []).filter((n: any) => !n.isRead).length;
+    return (
+      <div className="flex items-center gap-2 shrink-0">
+        <div className="relative">
+          <button 
+            onClick={() => {
+              onClose();
+              setView('NOTIFICATIONS');
+            }}
+            className="p-2 rounded-lg transition-all opacity-70 relative"
+            style={{ color: 'var(--header-text)' }}
+          >
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold px-1 min-w-[16px] h-4 rounded-full flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+        </div>
+        <button 
+          onClick={() => {
+            if (appThemeMode === 'light') {
+              setAppThemeMode('dark');
+            } else {
+              setAppThemeMode('light');
+            }
+          }}
+          className="p-2 rounded-lg transition-all opacity-70"
+          style={{ color: 'var(--header-text)' }}
+          title="Toggle Theme Mode"
+        >
+          {appThemeMode === 'light' ? <Moon size={20} strokeWidth={2.5} /> : <Sun size={20} strokeWidth={2.5} />}
+        </button>
+      </div>
+    );
+  };
 
   const [filterMonth, setFilterMonth] = useState<string>(String(currentFile?.month || 'ALL'));
   const [filterYear, setFilterYear] = useState<string>(String(currentFile?.year || 'ALL'));
@@ -1534,17 +1619,18 @@ const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpape
           background: 'var(--header-bg)'
         }}
       >
-        <div className="h-16 flex items-center px-4">
-          <div className="flex items-center gap-3">
+        <div className="h-16 flex items-center justify-between px-4 w-full gap-2">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
             <button 
               onClick={onClose} 
-              className="flex items-center justify-center transition-colors"
+              className="flex items-center justify-center transition-colors shrink-0"
               style={{ color: 'var(--header-text)' }}
             >
               <ChevronLeft size={24} />
             </button>
-            <h3 className="text-sm font-bold uppercase tracking-tight" style={{ color: 'var(--header-text)' }}>Pending Balance</h3>
+            <h3 className="text-sm font-bold uppercase tracking-tight truncate" style={{ color: 'var(--header-text)' }}>Pending Balance</h3>
           </div>
+          {renderHeaderActions()}
         </div>
       </div>
       <div 
@@ -1640,21 +1726,22 @@ const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpape
                 background: 'var(--header-bg)'
               }}
             >
-              <div className="h-14 flex items-center px-4">
-                <div className="flex items-center gap-3">
+              <div className="h-14 flex items-center justify-between px-4 w-full gap-2">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
                   <button 
                     onClick={() => {
                       setSelectedCategory(null);
                     }}
-                    className="flex items-center justify-center transition-colors"
+                    className="flex items-center justify-center transition-colors shrink-0"
                     style={{ color: 'var(--header-text)' }}
                   >
                     <ChevronLeft size={24} />
                   </button>
-                  <h3 className="text-sm font-bold capitalize tracking-tight" style={{ color: 'var(--header-text)' }}>
+                  <h3 className="text-sm font-bold capitalize tracking-tight truncate" style={{ color: 'var(--header-text)' }}>
                     {selectedCategory ? `Pending ${formatCategoryHeader(selectedCategory)} Details` : 'Pending Details'}
                   </h3>
                 </div>
+                {renderHeaderActions()}
               </div>
             </div>
 
@@ -1984,6 +2071,8 @@ const PendingBreakdownPage = ({ data, total, onClose, currency, isDark, wallpape
                   });
                 })()
               )}
+              {/* Extra Safe-Area Spacer to prevent content from being covered by the bottom navigation bar */}
+              <div className="h-44 sm:h-48 w-full shrink-0" />
             </div>
           </div>
         )}
