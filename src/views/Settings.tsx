@@ -1303,22 +1303,130 @@ const Settings: React.FC = () => {
             {activeSection === 'LOGO' && (
               <div className="space-y-6">
                 <div className="p-6 bg-theme-card rounded-lg flex flex-col items-center gap-6">
-                  <div className="relative w-32 h-32 p-4 bg-black/5 dark:bg-white/5 rounded-lg flex items-center justify-center">
-                    <img src={logo} alt="Logo" className="w-full h-full object-contain" />
+                  <div className="relative w-32 h-32 p-[6px] bg-black/5 dark:bg-white/5 rounded-xl flex items-center justify-center">
+                    <img src={logo} alt="Logo" className="w-full h-full object-contain drop-shadow-md" />
                   </div>
                   <div className="w-full space-y-4">
                     <p className="text-xs font-black text-text-main uppercase text-center">Change App Logo</p>
                     <div className="relative group">
                       <input 
                         type="file" 
-                        accept="image/*"
+                        accept="image/png, image/jpeg, image/webp"
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (file) {
+                            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+                            if (!allowedTypes.includes(file.type)) {
+                              showFeedback(language === 'bn' ? 'অসমর্থিত ফাইল ফরম্যাট। শুধুমাত্র PNG, JPG, WEBP সাপোর্ট করে।' : 'Unsupported format. Only PNG, JPG, WEBP allowed.', 'error');
+                              return;
+                            }
+                            if (file.size > 2 * 1024 * 1024) {
+                              showFeedback(language === 'bn' ? 'ফাইল সাইজ ২ মেগাবাইটের বেশি হতে পারবে না।' : 'File size cannot exceed 2 MB.', 'error');
+                              return;
+                            }
                             const reader = new FileReader();
                             reader.onloadend = () => {
-                              setLogo(reader.result as string);
-                              showFeedback('App logo updated successfully');
+                              const img = new Image();
+                              img.onload = () => {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = img.width;
+                                canvas.height = img.height;
+                                const ctx = canvas.getContext('2d');
+                                if (!ctx) return;
+                                ctx.drawImage(img, 0, 0);
+                                
+                                try {
+                                  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                                  const data = imgData.data;
+                                  let top = 0, bottom = canvas.height, left = 0, right = canvas.width;
+                                  
+                                  const isBg = (r: number, g: number, b: number, a: number) => {
+                                    if (a < 10) return true; // Transparent
+                                    if (r > 245 && g > 245 && b > 245) return true; // White-ish
+                                    return false;
+                                  };
+
+                                  top_loop: for (let y = 0; y < canvas.height; y++) {
+                                    for (let x = 0; x < canvas.width; x++) {
+                                      const idx = (y * canvas.width + x) * 4;
+                                      if (!isBg(data[idx], data[idx+1], data[idx+2], data[idx+3])) {
+                                        top = y; break top_loop;
+                                      }
+                                    }
+                                  }
+
+                                  bottom_loop: for (let y = canvas.height - 1; y >= 0; y--) {
+                                    for (let x = 0; x < canvas.width; x++) {
+                                      const idx = (y * canvas.width + x) * 4;
+                                      if (!isBg(data[idx], data[idx+1], data[idx+2], data[idx+3])) {
+                                        bottom = y + 1; break bottom_loop;
+                                      }
+                                    }
+                                  }
+
+                                  left_loop: for (let x = 0; x < canvas.width; x++) {
+                                    for (let y = 0; y < canvas.height; y++) {
+                                      const idx = (y * canvas.width + x) * 4;
+                                      if (!isBg(data[idx], data[idx+1], data[idx+2], data[idx+3])) {
+                                        left = x; break left_loop;
+                                      }
+                                    }
+                                  }
+
+                                  right_loop: for (let x = canvas.width - 1; x >= 0; x--) {
+                                    for (let y = 0; y < canvas.height; y++) {
+                                      const idx = (y * canvas.width + x) * 4;
+                                      if (!isBg(data[idx], data[idx+1], data[idx+2], data[idx+3])) {
+                                        right = x + 1; break right_loop;
+                                      }
+                                    }
+                                  }
+
+                                  const trimWidth = Math.max(1, right - left);
+                                  const trimHeight = Math.max(1, bottom - top);
+
+                                  const MAX_WIDTH = 512;
+                                  const MAX_HEIGHT = 512;
+                                  let scale = Math.min(MAX_WIDTH / trimWidth, MAX_HEIGHT / trimHeight);
+
+                                  const finalWidth = Math.round(trimWidth * scale);
+                                  const finalHeight = Math.round(trimHeight * scale);
+
+                                  const finalCanvas = document.createElement('canvas');
+                                  finalCanvas.width = finalWidth;
+                                  finalCanvas.height = finalHeight;
+                                  const finalCtx = finalCanvas.getContext('2d');
+                                  if (finalCtx) {
+                                    finalCtx.drawImage(
+                                      canvas,
+                                      left, top, trimWidth, trimHeight,
+                                      0, 0, finalWidth, finalHeight
+                                    );
+                                    const dataUrl = finalCanvas.toDataURL('image/webp', 0.8);
+                                    setLogo(dataUrl);
+                                    showFeedback(language === 'bn' ? 'লোগো সফলভাবে আপডেট হয়েছে। রিলোড হচ্ছে...' : 'Logo updated successfully. Reloading...', 'success');
+                                    setTimeout(() => window.location.reload(), 2000);
+                                  }
+                                } catch (e) {
+                                  // Fallback if getImageData fails due to CORS or other issues
+                                  const MAX_WIDTH = 512;
+                                  const MAX_HEIGHT = 512;
+                                  let width = img.width;
+                                  let height = img.height;
+                                  if (width > height) {
+                                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                                  } else {
+                                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                                  }
+                                  canvas.width = Math.round(width);
+                                  canvas.height = Math.round(height);
+                                  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                                  setLogo(canvas.toDataURL('image/webp', 0.8));
+                                  showFeedback(language === 'bn' ? 'লোগো সফলভাবে আপডেট হয়েছে। রিলোড হচ্ছে...' : 'Logo updated successfully. Reloading...', 'success');
+                                  setTimeout(() => window.location.reload(), 2000);
+                                }
+                              };
+                              img.src = reader.result as string;
                             };
                             reader.readAsDataURL(file);
                           }
@@ -1329,13 +1437,26 @@ const Settings: React.FC = () => {
                         style={{ background: 'var(--primary)' }}
                       >
                         <Plus size={16} />
-                        Upload New Logo
+                        {language === 'bn' ? 'নতুন লোগো আপলোড করুন' : 'Upload New Logo'}
                       </div>
                     </div>
+                    
+                    <div className="mt-2 p-4 bg-black/5 dark:bg-white/5 rounded-lg border border-black/10 dark:border-white/10 text-[10px] sm:text-xs text-text-muted space-y-2 text-left">
+                      <p className="font-bold text-text-main">{language === 'bn' ? 'সাপোর্টেড ফরম্যাট:' : 'Supported Formats:'}</p>
+                      <ul className="list-disc pl-4 space-y-1">
+                        <li>PNG (Recommended)</li>
+                        <li>JPG / JPEG</li>
+                        <li>WEBP</li>
+                      </ul>
+                      <p className="font-bold text-text-main mt-3">{language === 'bn' ? 'সর্বোচ্চ সাইজ:' : 'Maximum File Size:'}</p>
+                      <p className="pl-4">2 MB</p>
+                    </div>
+
                     <button 
                       onClick={() => {
                         setLogo('/logo.svg');
-                        showFeedback('Logo reset to default');
+                        showFeedback(language === 'bn' ? 'ডিফল্ট লোগো সেট করা হয়েছে। রিলোড হচ্ছে...' : 'Logo reset to default. Reloading...', 'success');
+                        setTimeout(() => window.location.reload(), 1500);
                       }}
                       className="w-full py-3 text-red-500 font-black text-[10px] uppercase tracking-widest rounded-lg hover:bg-red-500/10 transition-colors border border-red-500/20"
                     >

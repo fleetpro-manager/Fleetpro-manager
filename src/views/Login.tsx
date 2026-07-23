@@ -1656,8 +1656,8 @@ const Login: React.FC = () => {
               <div className="absolute w-[150px] h-[150px] rounded-full border-2 border-l-fuchsia-500 border-r-violet-500 border-t-transparent border-b-transparent animate-spin opacity-90" style={{ animationDuration: '10s' }} />
               <div className="absolute w-[120px] h-[120px] rounded-full border border-t-cyan-400 border-b-emerald-400 border-l-transparent border-r-transparent animate-spin opacity-95" style={{ animationDuration: '6s' }} />
 
-              <div className="relative w-24 h-24 rounded-2xl overflow-hidden flex items-center justify-center bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl transition-transform duration-300 hover:scale-105">
-                <img src={logo} alt="Logo" className="w-full h-full object-contain p-2 rounded-2xl" />
+              <div className="relative w-32 h-32 p-[6px] bg-black/5 dark:bg-white/5 rounded-xl flex items-center justify-center shadow-2xl transition-transform duration-300 hover:scale-105">
+                <img src={logo} alt="Logo" className="w-full h-full object-contain drop-shadow-md" />
               </div>
             </div>
 
@@ -1723,12 +1723,8 @@ const Login: React.FC = () => {
                     
                     className="text-center space-y-4 mb-6 px-4 flex-shrink-0 login-page-header md:hidden"
                   >
-                    <div className={`inline-flex w-24 h-24 rounded-full items-center justify-center p-2 mb-2 shadow-2xl transition-all duration-300 ${
-                      isBackgroundLight 
-                        ? 'bg-white ring-4 ring-black/5 border border-black/5' 
-                        : 'bg-white/10 backdrop-blur-md ring-2 ring-white/15 border border-white/10'
-                    }`}>
-                      <img src={logo} alt="Logo" className="w-full h-full object-contain rounded-full" />
+                    <div className="inline-flex relative w-32 h-32 p-[6px] bg-black/5 dark:bg-white/5 rounded-xl items-center justify-center mb-2 shadow-2xl transition-all duration-300">
+                      <img src={logo} alt="Logo" className="w-full h-full object-contain drop-shadow-md" />
                     </div>
                     <h1 className="text-4xl font-black text-text-main tracking-tight drop-shadow-lg">FLEETPRO</h1>
                     <p className="text-text-muted font-bold text-[10px] tracking-[0.35em] uppercase">Private Transport Manager</p>
