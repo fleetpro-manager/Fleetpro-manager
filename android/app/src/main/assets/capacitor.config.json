@@ -1,6 +1,6 @@
 {
 	"appId": "com.transportmanager.app",
-	"appName": "My Wallet",
+	"appName": "FleetPro Manager",
 	"webDir": "dist",
 	"server": {
 		"androidScheme": "https",

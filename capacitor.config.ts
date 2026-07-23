@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.transportmanager.app',
-  appName: 'My Wallet',
+  appName: 'FleetPro Manager',
   webDir: 'dist',
   server: {
     androidScheme: 'https',
