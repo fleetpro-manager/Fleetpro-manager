@@ -544,6 +544,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
          if (!parsed.language) parsed.language = 'en';
          if (!parsed.appThemeMode || parsed.appThemeMode === 'system') parsed.appThemeMode = 'light';
          if (!parsed.theme || parsed.theme === 'system') parsed.theme = 'day-mode';
+          if (!parsed.logo || parsed.logo === '/logo.svg') parsed.logo = '/logo.png';
          
          // Always reset transient visual states to prevent non-dismissible persistent popup bugs
          parsed.isFeedbackOpen = false;

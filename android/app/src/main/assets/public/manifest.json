@@ -1,6 +1,6 @@
 {
-  "name": "FleetPro Manager",
-  "short_name": "FleetPro Manager",
+  "name": "My Wallet",
+  "short_name": "My Wallet",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#121212",
