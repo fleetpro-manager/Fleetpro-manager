@@ -1658,9 +1658,15 @@ const Login: React.FC = () => {
 
               <div className="relative w-32 h-32 p-[6px] bg-black/5 dark:bg-white/5 rounded-xl flex items-center justify-center shadow-2xl transition-transform duration-300 hover:scale-105 overflow-hidden">
                 <img 
-                  src={logo && logo.startsWith('data:') ? logo : 'logo.png'} 
+                  src={logo} 
                   alt="Logo" 
                   className="w-full h-full object-contain rounded-[12px] drop-shadow-md" 
+                  onError={(e) => {
+                    const currentSrc = e.currentTarget.src;
+                    if (!currentSrc.endsWith('/logo.png')) {
+                      e.currentTarget.src = '/logo.png';
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -1729,9 +1735,15 @@ const Login: React.FC = () => {
                   >
                     <div className="inline-flex relative w-32 h-32 p-[6px] bg-black/5 dark:bg-white/5 rounded-xl items-center justify-center mb-2 shadow-2xl transition-all duration-300 overflow-hidden">
                       <img 
-                        src={logo && logo.startsWith('data:') ? logo : 'logo.png'} 
+                        src={logo} 
                         alt="Logo" 
                         className="w-full h-full object-contain rounded-[12px] drop-shadow-md" 
+                        onError={(e) => {
+                          const currentSrc = e.currentTarget.src;
+                          if (!currentSrc.endsWith('/logo.png')) {
+                            e.currentTarget.src = '/logo.png';
+                          }
+                        }}
                       />
                     </div>
                     <h1 className="text-4xl font-black text-text-main tracking-tight drop-shadow-lg">FLEETPRO</h1>

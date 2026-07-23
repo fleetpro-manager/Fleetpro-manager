@@ -438,8 +438,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       appThemeMode: 'light',
       isNightMode: false,
       selectedCurrency: 'USD',
-      logo: 'logo.png',
-      zoom: typeof window !== 'undefined' && window.innerWidth < 768 ? 1.08 : 1.0,
+      logo: '/logo.png',
+      zoom: 1,
       headerBg: '#2563EB',
       primaryColor: '#3b82f6',
       headerText: '#FFFFFF',
@@ -544,7 +544,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
          if (!parsed.language) parsed.language = 'en';
          if (!parsed.appThemeMode || parsed.appThemeMode === 'system') parsed.appThemeMode = 'light';
          if (!parsed.theme || parsed.theme === 'system') parsed.theme = 'day-mode';
-          if (!parsed.logo || parsed.logo === '/logo.svg' || parsed.logo === '/logo.png') parsed.logo = 'logo.png';
+          if (!parsed.logo || parsed.logo === '/logo.svg') parsed.logo = '/logo.png';
          
          // Always reset transient visual states to prevent non-dismissible persistent popup bugs
          parsed.isFeedbackOpen = false;
@@ -1171,7 +1171,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           d.fuels = [];
           d.allFuels = [];
           d.notifications = [];
-          d.logo = 'logo.png';
+          d.logo = '/logo.png';
           d.headerBg = '#2563EB';
           d.backgroundColor = '';
           d.navBg = '#FFFFFF';
@@ -1190,7 +1190,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         });
         
         saveFirebaseDocMerge('settings', 'branding', {
-          logo: 'logo.png',
+          logo: '/logo.png',
           headerBg: '#2563EB',
           backgroundColor: '',
           navBg: '#FFFFFF',

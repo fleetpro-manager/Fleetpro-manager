@@ -1,12 +1,5 @@
 @import "tailwindcss";
 
-@theme {
-  --radius-md: 12px;
-  --radius-lg: 12px;
-  --radius-xl: 12px;
-  --radius-2xl: 12px;
-}
-
 * {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
