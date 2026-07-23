@@ -438,7 +438,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       appThemeMode: 'light',
       isNightMode: false,
       selectedCurrency: 'USD',
-      logo: '/logo.svg',
+      logo: '/logo.png',
       zoom: 1,
       headerBg: '#2563EB',
       primaryColor: '#3b82f6',
@@ -1170,7 +1170,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           d.fuels = [];
           d.allFuels = [];
           d.notifications = [];
-          d.logo = '/logo.svg';
+          d.logo = '/logo.png';
           d.headerBg = '#2563EB';
           d.backgroundColor = '';
           d.navBg = '#FFFFFF';
@@ -1189,7 +1189,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         });
         
         saveFirebaseDocMerge('settings', 'branding', {
-          logo: '/logo.svg',
+          logo: '/logo.png',
           headerBg: '#2563EB',
           backgroundColor: '',
           navBg: '#FFFFFF',

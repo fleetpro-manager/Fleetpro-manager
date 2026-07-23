@@ -1454,7 +1454,7 @@ const Settings: React.FC = () => {
 
                     <button 
                       onClick={() => {
-                        setLogo('/logo.svg');
+                        setLogo('/logo.png');
                         showFeedback(language === 'bn' ? 'ডিফল্ট লোগো সেট করা হয়েছে। রিলোড হচ্ছে...' : 'Logo reset to default. Reloading...', 'success');
                         setTimeout(() => window.location.reload(), 1500);
                       }}
