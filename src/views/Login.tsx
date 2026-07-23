@@ -1657,7 +1657,17 @@ const Login: React.FC = () => {
               <div className="absolute w-[120px] h-[120px] rounded-full border border-t-cyan-400 border-b-emerald-400 border-l-transparent border-r-transparent animate-spin opacity-95" style={{ animationDuration: '6s' }} />
 
               <div className="relative w-32 h-32 p-[6px] bg-black/5 dark:bg-white/5 rounded-xl flex items-center justify-center shadow-2xl transition-transform duration-300 hover:scale-105 overflow-hidden">
-                <img src={logo} alt="Logo" className="w-full h-full object-contain rounded-[12px] drop-shadow-md" />
+                <img 
+                  src={logo} 
+                  alt="Logo" 
+                  className="w-full h-full object-contain rounded-[12px] drop-shadow-md" 
+                  onError={(e) => {
+                    const currentSrc = e.currentTarget.src;
+                    if (!currentSrc.endsWith('/logo.png')) {
+                      e.currentTarget.src = '/logo.png';
+                    }
+                  }}
+                />
               </div>
             </div>
 
@@ -1724,7 +1734,17 @@ const Login: React.FC = () => {
                     className="text-center space-y-4 mb-6 px-4 flex-shrink-0 login-page-header md:hidden"
                   >
                     <div className="inline-flex relative w-32 h-32 p-[6px] bg-black/5 dark:bg-white/5 rounded-xl items-center justify-center mb-2 shadow-2xl transition-all duration-300 overflow-hidden">
-                      <img src={logo} alt="Logo" className="w-full h-full object-contain rounded-[12px] drop-shadow-md" />
+                      <img 
+                        src={logo} 
+                        alt="Logo" 
+                        className="w-full h-full object-contain rounded-[12px] drop-shadow-md" 
+                        onError={(e) => {
+                          const currentSrc = e.currentTarget.src;
+                          if (!currentSrc.endsWith('/logo.png')) {
+                            e.currentTarget.src = '/logo.png';
+                          }
+                        }}
+                      />
                     </div>
                     <h1 className="text-4xl font-black text-text-main tracking-tight drop-shadow-lg">FLEETPRO</h1>
                     <p className="text-text-muted font-bold text-[10px] tracking-[0.35em] uppercase">Private Transport Manager</p>

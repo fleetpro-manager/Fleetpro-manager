@@ -652,11 +652,17 @@ const ViewContainer: React.FC = () => {
               <div className="absolute w-[108px] h-[108px] rounded-full border border-t-cyan-400 border-b-emerald-400 border-l-transparent border-r-transparent animate-spin-cw opacity-95" />
 
               {/* Centered Floating Application Logo */}
-              <div className="relative w-20 h-20 rounded-[14px] overflow-hidden flex items-center justify-center animate-float bg-transparent">
+              <div className="relative w-20 h-20 rounded-[12px] overflow-hidden flex items-center justify-center animate-float bg-transparent">
                 <img 
                   src={logo} 
                   alt="FleetPro Logo" 
-                  className="w-20 h-20 object-contain rounded-[14px] bg-transparent drop-shadow-[0_4px_12px_rgba(34,211,238,0.4)]" 
+                  className="w-20 h-20 object-contain rounded-[12px] bg-transparent drop-shadow-[0_4px_12px_rgba(34,211,238,0.4)]" 
+                  onError={(e) => {
+                    const currentSrc = e.currentTarget.src;
+                    if (!currentSrc.endsWith('/logo.png')) {
+                      e.currentTarget.src = '/logo.png';
+                    }
+                  }}
                 />
               </div>
             </div>

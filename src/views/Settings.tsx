@@ -1304,7 +1304,17 @@ const Settings: React.FC = () => {
               <div className="space-y-6">
                 <div className="p-6 bg-theme-card rounded-lg flex flex-col items-center gap-6">
                   <div className="relative w-32 h-32 p-[6px] bg-black/5 dark:bg-white/5 rounded-xl flex items-center justify-center overflow-hidden">
-                    <img src={logo} alt="Logo" className="w-full h-full object-contain rounded-[12px] drop-shadow-md" />
+                    <img 
+                      src={logo} 
+                      alt="Logo" 
+                      className="w-full h-full object-contain rounded-[12px] drop-shadow-md" 
+                      onError={(e) => {
+                        const currentSrc = e.currentTarget.src;
+                        if (!currentSrc.endsWith('/logo.png')) {
+                          e.currentTarget.src = '/logo.png';
+                        }
+                      }}
+                    />
                   </div>
                   <div className="w-full space-y-4">
                     <p className="text-xs font-black text-text-main uppercase text-center">Change App Logo</p>

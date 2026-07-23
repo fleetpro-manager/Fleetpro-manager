@@ -153,3 +153,11 @@ export const deleteNativeBiometricCredentials = async (): Promise<boolean> => {
   }
 };
 
+export const registerNativeBiometric = async (userId: string, username: string): Promise<boolean> => {
+  return setNativeBiometricCredentials(username, userId);
+};
+
+export const authenticateNativeBiometric = async (): Promise<boolean> => {
+  return verifyNativeBiometric();
+};
+
